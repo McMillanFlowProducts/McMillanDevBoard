@@ -36,7 +36,7 @@ void heartbeat() {
   if (millis() - prevMillis >= 500) {
     // set color to red
     if (!heartbeatLED) {
-      pixels.fill(0xFF0000);
+      pixels.fill(0x00FF00);
       pixels.show();
     } else {
       pixels.fill(0x000000);
