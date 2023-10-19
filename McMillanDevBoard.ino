@@ -1,5 +1,9 @@
 #define MCMILLAN_OTA
 
+//#ifndef PIN_NEOPIXEL
+#define PIN_NEOPIXEL  48
+//#endif
+
 #include <Adafruit_NeoPixel.h>
 #include "McMillanOTA.cpp"
 
@@ -10,6 +14,10 @@ bool heartbeatLED = false;
 
 void setup(void) {
   Serial.begin(115200);
+  Serial1.begin(115200);
+  Serial1.println("hello");
+  //Serial2.begin(115200);
+  //Serial2.println("hello2");
 
 #if defined(NEOPIXEL_POWER)
   // If this board has a power control pin, we must set it to output and high
