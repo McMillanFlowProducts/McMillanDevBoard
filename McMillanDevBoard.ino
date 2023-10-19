@@ -14,8 +14,8 @@ bool heartbeatLED = false;
 
 void setup(void) {
   Serial.begin(115200);
-  Serial1.begin(115200);
-  Serial1.println("hello");
+  //Serial1.begin(115200);
+  Serial.println("hello world");
   //Serial2.begin(115200);
   //Serial2.println("hello2");
 
