@@ -1,8 +1,5 @@
 #define MCMILLAN_OTA
-
-//#ifndef PIN_NEOPIXEL
 #define PIN_NEOPIXEL  48
-//#endif
 
 #include <Adafruit_NeoPixel.h>
 #include "McMillanOTA.cpp"
@@ -16,16 +13,6 @@ void setup(void) {
   Serial.begin(115200);
   //Serial1.begin(115200);
   Serial.println("hello world");
-  //Serial2.begin(115200);
-  //Serial2.println("hello2");
-
-#if defined(NEOPIXEL_POWER)
-  // If this board has a power control pin, we must set it to output and high
-  // in order to enable the NeoPixels. We put this in an #if defined so it can
-  // be reused for other boards without compilation errors
-  pinMode(NEOPIXEL_POWER, OUTPUT);
-  digitalWrite(NEOPIXEL_POWER, HIGH);
-#endif
 
   pixels.begin();
   pixels.setBrightness(20);
