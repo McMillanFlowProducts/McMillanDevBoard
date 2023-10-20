@@ -112,15 +112,15 @@ const uint8_t _RTRV_STATUS_ = 0b01111100;             // Don't-Care Fast-CMD to 
 
 void SPI_WRT(uint8_t, uint32_t);                      // SPI Write-CMD Function Prototype.
 
+void SPI_FASTCMD(uint8_t);                            // SPI Fast-CMD Function Prototype.
+
 uint32_t SPI_RD(uint8_t, _u16data_t&, uint64_t&);     // SPI Read-CMD Function Prototype.
+
+uint64_t SPI_COMMCRC(_u64data_t);                     // SPI Communication-CRC Function Prototype.
 
 uint8_t CONV_START(uint8_t);                          // ADC Conversion-Start Prototype.
 
 uint8_t RETRIEVE_STATUS(void);                        // ADC STATUS Byte Retrieval Function Prototype.
-
-void SPI_FASTCMD(uint8_t);                            // SPI Fast-CMD Function Prototype.
-
-uint64_t SPI_COMMCRC(_u64data_t);                     // SPI Communication-CRC Function Prototype.
 
 /************************************************************************************************************************************************************
  End of File
