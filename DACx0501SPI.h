@@ -16,9 +16,13 @@ static const uint8_t DAC_CMD_TRIGGER = 0x05;
 static const uint8_t DAC_CMD_STATUS  = 0x06;
 static const uint8_t DAC_CMD_DACn    = 0x08;
 
+static const uint8_t DAC_16 = 0;
+static const uint8_t DAC_14 = 2;
+static const uint8_t DAC_12 = 4;
+
 class DACx0501SPI {
   public:
-    DACx0501SPI(int _sclk, int _mosi, int _ss, int _spiCLK = 10000000);
+    DACx0501SPI(uint8_t _bits, int _sclk, int _mosi, int _ss, int _spiCLK = 10000000);
     void begin();
     void set(int _value);
     void setREFDIV(bool _value);
@@ -26,10 +30,10 @@ class DACx0501SPI {
     void disableREF(bool _value);
     void disableDAC(bool _value);
   protected:
-    int sclk, mosi, ss, spiCLK, value;
+    int bits, sclk, mosi, ss, spiCLK, value;
+    uint16_t gain, config;
     SPIClass *dacspi;
-    int spiCommand(SPIClass *spi, uint8_t cmd, int data);
-
+    void spiCommand(SPIClass *spi, uint8_t cmd, uint16_t data);
 };
 
 
