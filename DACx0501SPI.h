@@ -1,5 +1,7 @@
+#ifndef DACx0501SPI_H
+#define DACx0501SPI_H
+
 #ifndef DACx0501_H
-#define DACx0501_H
 
 #include <Arduino.h>
 #include <SPI.h>
@@ -36,5 +38,5 @@ class DACx0501SPI {
     void spiCommand(SPIClass *spi, uint8_t cmd, uint16_t data);
 };
 
-
+#endif
 #endif //DACx0501_H

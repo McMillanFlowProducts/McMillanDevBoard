@@ -1,4 +1,5 @@
 #include "DACx0501SPI.h"
+#ifndef DACx0501_H
 
 DACx0501SPI::DACx0501SPI(uint8_t _bits, int _sclk, int _mosi, int _ss, int _spiCLK)
   : bits(_bits), sclk(_sclk), mosi(_mosi), ss(_ss), spiCLK(_spiCLK) {}
@@ -69,3 +70,4 @@ void DACx0501SPI::spiCommand(SPIClass *spi, uint8_t cmd, uint16_t data) {
   digitalWrite(spi->pinSS(), HIGH);  //pull ss high to signify end of data transfer
   spi->endTransaction();
 }
+#endif

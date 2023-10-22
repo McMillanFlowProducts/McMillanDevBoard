@@ -2,58 +2,24 @@
 
 #include <Adafruit_NeoPixel.h>
 #include "McMillanOTA.cpp"
-#include "DACx0501SPI.h"
+#include "DACx0501.h"
 #include <Wire.h>
 
 Adafruit_NeoPixel pixels(1, 48, NEO_GRB + NEO_KHZ800);
-//DACx0501SPI dac(DAC_16, 36, 35, 42);
+DACx0501 dac(DAC_16, 0x48, 41, 40);
 McMillanOTA ota;
 
 long prevMillis = 0;
 bool heartbeatLED = false;
 bool demo = false;
+bool demoDIR = true;
+int demoValue = 0;
 
 void setup(void) {
   Serial.begin(115200);
   Serial.println("hello world");
-
-  Wire.begin(35, 36, 1000000);
-
-  
-  Wire.beginTransmission(0x48);
-  Wire.write(DAC_CMD_CONFIG);
-  Wire.write(0x00);
-  Wire.write(0x00);
-  Wire.endTransmission();
-  
-  Wire.beginTransmission(0x48);
-  Wire.write(DAC_CMD_GAIN);
-  Wire.write(0x00);
-  Wire.write(0x01);
-  Wire.endTransmission();
-
-  Wire.beginTransmission(0x48);
-  Wire.write(DAC_CMD_DACn);
-  Wire.write(0xFF);
-  Wire.write(0xFF);
-  Wire.endTransmission();
-
-  Wire.beginTransmission(0x48);
-  Wire.write(DAC_CMD_DEVID);
-  Wire.endTransmission();
-
-  Wire.requestFrom(0x48, 2);
-  Serial.println(Wire.read(), BIN);
-  Serial.println(Wire.read(), BIN);
-
-  Wire.beginTransmission(0x48);
-  Wire.write(DAC_CMD_STATUS);
-  Wire.endTransmission();
-
-  Wire.requestFrom(0x48, 2);
-  Serial.println(Wire.read(), BIN);
-  Serial.println(Wire.read(), BIN);
-  //dac.begin();
+  pinMode(1, INPUT);
+  dac.begin();
 
   pixels.begin();
   pixels.setBrightness(20);
@@ -83,14 +49,15 @@ void loop(void) {
   ota.loop();
   heartbeat();
 
-  /*
+  Serial.println(analogRead(1));
+
   while (Serial.available()) {
     switch (Serial.read()) {
       case 'i':
         {
           int value = Serial.parseInt();
           Serial.printf("DAC: 0x%04X, %04d\n", value, value);
-          dac.set(value);
+          dac.setValue(value);
         }
         break;
       case 'g':
@@ -123,11 +90,11 @@ void loop(void) {
         {
           switch (Serial.parseInt()) {
             case 0:
-              dac.disableREF(0);
+              dac.setREF_PWDWN(0);
               Serial.println("IREF ON");
               break;
-           default:
-              dac.disableREF(1);
+            default:
+              dac.setREF_PWDWN(1);
               Serial.println("IREF OFF");
           }
         }
@@ -136,11 +103,11 @@ void loop(void) {
         {
           switch (Serial.parseInt()) {
             case 0:
-              dac.disableDAC(0);
+              dac.setDAC_PWDWN(0);
               Serial.println("DAC ON");
               break;
             default:
-              dac.disableDAC(1);
+              dac.setDAC_PWDWN(1);
               Serial.println("DAC OFF");
           }
         }
@@ -148,21 +115,21 @@ void loop(void) {
       case 'd':
         demo = !demo;
     }
-  }*/
+  }
   if (demo) {
-    for (int i = 0; i <= 0xFFFF; i += 100) {
-      Wire.beginTransmission(0x48);
-      Wire.write(DAC_CMD_DACn);
-      Wire.write(i >> 8);
-      Wire.write(i & 0xFF);
-      Wire.endTransmission();
+    dac.setValue(demoValue);
+    if (demoDIR) {
+      demoValue += 10;
+    } else {
+      demoValue -= 10;
     }
-    for (int i = 0xFFFF; i >= 0; i -= 100) {
-      Wire.beginTransmission(0x48);
-      Wire.write(DAC_CMD_DACn);
-      Wire.write(i >> 8);
-      Wire.write(i & 0xFF);
-      Wire.endTransmission();
+    if (demoValue <= 0 || demoValue >= 0xFFFF) {
+      demoDIR = !demoDIR;
+      if (demoValue < 1) {
+        demoValue = 0;
+      } else {
+        demoValue = 0xFFFF;
+      }
     }
   }
 }
