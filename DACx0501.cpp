@@ -10,15 +10,10 @@ bool DACx0501::begin(DACx0501Config _config) {
 }
 
 void DACx0501::config(DACx0501Config _config) {
-  REFDIV = _config.REFDIV;
-  GAIN = _config.GAIN;
-  REF_PWDWN = _config.REF_PWDWN;
-  DAC_PWDWN = _config.DAC_PWDWN;
-  
-  setREFDIV(REFDIV);
-  setGain(GAIN);
-  setREF_PWDWN(REF_PWDWN);
-  setDAC_PWDWN(DAC_PWDWN);
+  setREFDIV(_config.REFDIV);
+  setGain(_config.GAIN);
+  setREF_PWDWN(_config.REF_PWDWN);
+  setDAC_PWDWN(_config.DAC_PWDWN);
 }
 
 bool DACx0501::getRES() {
@@ -82,7 +77,6 @@ bool DACx0501::getGain() {
 
 void DACx0501::setREF_PWDWN(bool _value) {
   uint16_t current = read(DAC_CMD_CONFIG) & DAC_REG_DAC_PWDWN;
-  REF_PWDWN = _value;
   if (_value) {
     write(DAC_CMD_CONFIG, current | DAC_REG_REF_PWDWN);
   } else {
@@ -96,7 +90,6 @@ bool DACx0501::getREF_PWDWN() {
 
 void DACx0501::setDAC_PWDWN(bool _value) {
   uint16_t current = read(DAC_CMD_CONFIG) & DAC_REG_REF_PWDWN;
-  DAC_PWDWN = _value;
   if (_value) {
     write(DAC_CMD_CONFIG, current | DAC_REG_DAC_PWDWN);
   } else {

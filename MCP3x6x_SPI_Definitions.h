@@ -42,8 +42,8 @@
 /***********************************************************************************************************************************************************/
 /***********************************************************************************************************************************************************/
 
-//#define ENABLE_SPI_CRC                                  // Enable Communication-CRC.
-#define DISABLE_SPI_CRC                                 // Disable Communication-CRC.
+#define ENABLE_SPI_CRC                                  // Enable Communication-CRC.
+//#define DISABLE_SPI_CRC                                 // Disable Communication-CRC.
 
 //#define ENABLE_ADCCONV_FASTCMD                          // Enable ADC Conversion Fast-CMD.
 #define DISABLE_ADCCONV_FASTCMD                         // Disable ADC Conversion Fast-CMD.

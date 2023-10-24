@@ -65,7 +65,6 @@ class DACx0501 {
     bool getAlarm();
   protected:
     int bits, address, sda, scl, wireCLK;
-    bool REFDIV, GAIN, REF_PWDWN, DAC_PWDWN;
     uint16_t read(uint8_t cmd);
     void write(uint8_t cmd, uint16_t data);
     bool getRES();
