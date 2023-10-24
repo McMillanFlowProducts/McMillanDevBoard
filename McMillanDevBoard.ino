@@ -1,21 +1,25 @@
 //#define MCMILLAN_OTA
+#define MCM_DEBUG
 
 #include <Adafruit_NeoPixel.h>
 #include "McMillanOTA.cpp"
 #include "DACx0501.h"
 #include "MCP3x6x.h"
+#include "AD5144A.h"
 
-#define MCM_SDA       41
-#define MCM_SCL       40
-#define MCM_SCK       36
-#define MCM_MISO      37
-#define MCM_MOSI      35
-#define MCM_NEOPIXEL  48
-#define ADC_CS        42
+#define MCM_SDA 41
+#define MCM_SCL 40
+#define MCM_SCK 36
+#define MCM_MISO 37
+#define MCM_MOSI 35
+#define MCM_NEOPIXEL 48
+#define ADC_CS 42
 
 Adafruit_NeoPixel pixels(1, MCM_NEOPIXEL, NEO_GRB + NEO_KHZ800);
 DACx0501 dac(DAC_ADDR_AGND, MCM_SDA, MCM_SCL);
 MCP3x6x adc(MCM_SCK, MCM_MISO, MCM_MOSI, ADC_CS);
+AD5141 dpot(0x77);
+
 McMillanOTA ota;
 
 long prevMillis = 0;
@@ -24,17 +28,44 @@ bool demo = false;
 bool demoDIR = true;
 int demoValue = 0;
 
+DACx0501Config dacconfig;
+
 void setup(void) {
   Serial.begin(115200);
-  Serial.println("hello world");
-  pinMode(1, INPUT);
-  adc.begin();
-  dac.begin({true, true, false, false});
-  dac.setValue(0xFFAF);
+  Serial.println();
+  Serial.println("McMillan Flow DEV");
+
+  pinMode(1, INPUT);  //enable analog read for valve
+
+  //adc.begin();
+
+  dacconfig.REFDIV = true;
+  dacconfig.GAIN = true;
+  dacconfig.REF_PWDWN = false;
+  dacconfig.DAC_PWDWN = false;
+
+  Serial.print("DAC BEGIN: ");
+  dac.begin(dacconfig);
+
+  dac.setValue(0xFFAA);
+
+  Serial.println("DPOT DEBUG:");
+  Serial.print("Begin: ");
+  Serial.println(dpot.begin());
+  Serial.print("Connected: ");
+  Serial.println(dpot.isConnected());
+  Serial.print("CHANNELS:\t");
+  Serial.println(dpot.pmCount());
+  Serial.print("MAXVALUE:\t");
+  Serial.println(dpot.maxValue());
+  Serial.println();
 
   pixels.begin();
   pixels.setBrightness(20);
+
   ota.begin();
+
+  delay(5000);
 }
 
 void heartbeat() {

@@ -10,24 +10,34 @@ bool DACx0501::begin(DACx0501Config _config) {
 }
 
 void DACx0501::config(DACx0501Config _config) {
-  setREFDIV(_config.REFDIV);
-  setGain(_config.GAIN);
-  setREF_PWDWN(_config.REF_PWRDWN);
-  setDAC_PWDWN(_config.DAC_PWRDWN);
+  REFDIV = _config.REFDIV;
+  GAIN = _config.GAIN;
+  REF_PWDWN = _config.REF_PWDWN;
+  DAC_PWDWN = _config.DAC_PWDWN;
+  
+  setREFDIV(REFDIV);
+  setGain(GAIN);
+  setREF_PWDWN(REF_PWDWN);
+  setDAC_PWDWN(DAC_PWDWN);
 }
 
 bool DACx0501::getRES() {
+  //Serial.println(read(DAC_CMD_DEVID) & DAC_REG_RES, HEX);
   switch (read(DAC_CMD_DEVID) & DAC_REG_RES) {
     case DAC_REG_RES12:
       bits = DAC_12;
+      Serial.println("12BITDAC");
       break;
     case DAC_REG_RES14:
       bits = DAC_14;
+      Serial.println("14BITDAC");
       break;
     case DAC_REG_RES16:
       bits = DAC_16;
+      Serial.println("16BITDAC");
       break;
     default:
+      Serial.println("DAC NOT FOUND");
       return false;
   }
   return true;
@@ -45,11 +55,11 @@ uint16_t DACx0501::getValue() {
 }
 
 void DACx0501::setREFDIV(bool _value) {
-  int current = read(DAC_CMD_GAIN);
+  int current = read(DAC_CMD_GAIN) & DAC_REG_GAIN;
   if (_value) {
     write(DAC_CMD_GAIN, current | DAC_REG_REFDIV);
   } else {
-    write(DAC_CMD_GAIN, current & ~DAC_REG_REFDIV);
+    write(DAC_CMD_GAIN, current);
   }
 }
 
@@ -58,11 +68,11 @@ bool DACx0501::getREFDIV() {
 }
 
 void DACx0501::setGain(bool _value) {
-  int current = read(DAC_CMD_GAIN);
+  int current = read(DAC_CMD_GAIN) & DAC_REG_REFDIV;
   if (_value) {
     write(DAC_CMD_GAIN, current | DAC_REG_GAIN);
   } else {
-    write(DAC_CMD_GAIN, current & ~DAC_REG_GAIN);
+    write(DAC_CMD_GAIN, current);
   }
 }
 
@@ -71,11 +81,12 @@ bool DACx0501::getGain() {
 }
 
 void DACx0501::setREF_PWDWN(bool _value) {
-  int current = read(DAC_CMD_CONFIG);
+  uint16_t current = read(DAC_CMD_CONFIG) & DAC_REG_DAC_PWDWN;
+  REF_PWDWN = _value;
   if (_value) {
     write(DAC_CMD_CONFIG, current | DAC_REG_REF_PWDWN);
   } else {
-    write(DAC_CMD_CONFIG, current & ~DAC_REG_REF_PWDWN);
+    write(DAC_CMD_CONFIG, current);
   }
 }
 
@@ -84,11 +95,12 @@ bool DACx0501::getREF_PWDWN() {
 }
 
 void DACx0501::setDAC_PWDWN(bool _value) {
-  int current = read(DAC_CMD_CONFIG);
+  uint16_t current = read(DAC_CMD_CONFIG) & DAC_REG_REF_PWDWN;
+  DAC_PWDWN = _value;
   if (_value) {
     write(DAC_CMD_CONFIG, current | DAC_REG_DAC_PWDWN);
   } else {
-    write(DAC_CMD_CONFIG, current & ~DAC_REG_DAC_PWDWN);
+    write(DAC_CMD_CONFIG, current);
   }
 }
 
@@ -116,6 +128,6 @@ void DACx0501::write(uint8_t cmd, uint16_t data) {
   Wire.beginTransmission(address);
   Wire.write(cmd);
   Wire.write(data >> 8);
-  Wire.write(data | 0xFF);
+  Wire.write(data & 0xFF);
   Wire.endTransmission();
 }

@@ -41,10 +41,10 @@ static const uint8_t DAC_14 = 2;
 static const uint8_t DAC_12 = 4;
 
 struct DACx0501Config{
-bool REFDIV;
-bool GAIN;
-bool REF_PWRDWN;
-bool DAC_PWRDWN;
+bool REFDIV = true;
+bool GAIN = true;
+bool REF_PWDWN = false;
+bool DAC_PWDWN = false;
 };
 
 class DACx0501 {
@@ -65,6 +65,7 @@ class DACx0501 {
     bool getAlarm();
   protected:
     int bits, address, sda, scl, wireCLK;
+    bool REFDIV, GAIN, REF_PWDWN, DAC_PWDWN;
     uint16_t read(uint8_t cmd);
     void write(uint8_t cmd, uint16_t data);
     bool getRES();

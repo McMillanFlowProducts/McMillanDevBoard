@@ -141,7 +141,7 @@ const uint8_t _CONFIG3_ = 0x04;               // CONFIG3 Register Address.
     // CONV_MODE Settings
     #define CONV_MODE_CONT 0b11000000
     #define CONV_MODE_OS_STDBY 0b10000000
-    #define CONV_MODE_OS_SHTDN 0b01000000
+    //#define CONV_MODE_OS_SHTDN 0b01000000
     #define CONV_MODE_OS_SHTDN 0b00000000
 
     // DATA_FORMAT Settings
