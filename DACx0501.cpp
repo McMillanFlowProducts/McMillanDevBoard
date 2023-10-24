@@ -1,22 +1,47 @@
 #include "DACx0501.h"
 
-DACx0501::DACx0501(uint8_t _bits, int _address, int _sda, int _scl, int _wireCLK)
-  : bits(_bits), address(_address), sda(_sda), scl(_scl), wireCLK(_wireCLK) {}
+DACx0501::DACx0501(uint8_t _address, int _sda, int _scl, int _wireCLK)
+  : address(_address), sda(_sda), scl(_scl), wireCLK(_wireCLK) {}
 
-void DACx0501::begin() {
+bool DACx0501::begin(DACx0501Config _config) {
   Wire.begin(sda, scl, wireCLK);
-
-  setREFDIV(true);
-  setGain(true);
-  setValue(0xAAFF);
+  config(_config);
+  return getRES();
 }
 
-void DACx0501::setValue(int _value) {
-  write(DAC_CMD_DACn, _value);
+void DACx0501::config(DACx0501Config _config) {
+  setREFDIV(_config.REFDIV);
+  setGain(_config.GAIN);
+  setREF_PWDWN(_config.REF_PWRDWN);
+  setDAC_PWDWN(_config.DAC_PWRDWN);
+}
+
+bool DACx0501::getRES() {
+  switch (read(DAC_CMD_DEVID) & DAC_REG_RES) {
+    case DAC_REG_RES12:
+      bits = DAC_12;
+      break;
+    case DAC_REG_RES14:
+      bits = DAC_14;
+      break;
+    case DAC_REG_RES16:
+      bits = DAC_16;
+      break;
+    default:
+      return false;
+  }
+  return true;
+}
+
+void DACx0501::setValue(uint16_t _value) {
+  if (_value <= (0xFFFF >> bits)){
+    write(DAC_CMD_DACn, _value << bits);
+  }
+  
 }
 
 uint16_t DACx0501::getValue() {
-  return read(DAC_CMD_DACn);
+  return read(DAC_CMD_DACn) >> bits;
 }
 
 void DACx0501::setREFDIV(bool _value) {
@@ -69,6 +94,10 @@ void DACx0501::setDAC_PWDWN(bool _value) {
 
 bool DACx0501::getDAC_PWDWN() {
   return (bool)((read(DAC_CMD_CONFIG) & DAC_REG_DAC_PWDWN) == DAC_REG_DAC_PWDWN);
+}
+
+bool DACx0501::getAlarm() {
+  return (bool)((read(DAC_CMD_STATUS) & DAC_REG_REF_ALARM) == DAC_REG_REF_ALARM);
 }
 
 uint16_t DACx0501::read(uint8_t cmd) {

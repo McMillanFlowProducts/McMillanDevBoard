@@ -3,10 +3,19 @@
 #include <Adafruit_NeoPixel.h>
 #include "McMillanOTA.cpp"
 #include "DACx0501.h"
-#include <Wire.h>
+#include "MCP3x6x.h"
 
-Adafruit_NeoPixel pixels(1, 48, NEO_GRB + NEO_KHZ800);
-DACx0501 dac(DAC_16, 0x48, 41, 40);
+#define MCM_SDA       41
+#define MCM_SCL       40
+#define MCM_SCK       36
+#define MCM_MISO      37
+#define MCM_MOSI      35
+#define MCM_NEOPIXEL  48
+#define ADC_CS        42
+
+Adafruit_NeoPixel pixels(1, MCM_NEOPIXEL, NEO_GRB + NEO_KHZ800);
+DACx0501 dac(DAC_ADDR_AGND, MCM_SDA, MCM_SCL);
+MCP3x6x adc(MCM_SCK, MCM_MISO, MCM_MOSI, ADC_CS);
 McMillanOTA ota;
 
 long prevMillis = 0;
@@ -19,7 +28,9 @@ void setup(void) {
   Serial.begin(115200);
   Serial.println("hello world");
   pinMode(1, INPUT);
-  dac.begin();
+  adc.begin();
+  dac.begin({true, true, false, false});
+  dac.setValue(0xFFAF);
 
   pixels.begin();
   pixels.setBrightness(20);
