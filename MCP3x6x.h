@@ -3,9 +3,7 @@
 
 #include <Arduino.h>
 #include <SPI.h>
-#include "MCP3x6x_Type_Definitions.h"
-#include "MCP3x6x_ADC_Definitions.h"
-#include "MCP3x6x_SPI_Definitions.h"
+#include "MCP3x6x_Definitions.h"
 
 class MCP3x6x {
 public:

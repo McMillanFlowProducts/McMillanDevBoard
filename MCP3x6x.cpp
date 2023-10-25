@@ -29,6 +29,7 @@ uint32_t MCP3x6x::SPIRead(SPIClass* spi, uint8_t addr) {
 }
 
 void MCP3x6x::config() {
+  /*
   //GAINCAL --> (8,253,056 / 8,388,607 = 1.615894%) Gain Error w/2.048V Input --> (0b01111011110111010000000 = 0x7DEE80).
   SPIWrite(mcp, _GAINCAL_, GAINCAL_CFG);  // GAINCAL_CFG defined in "MCP3x6x_ADC_Definitions.h" file.
 
@@ -61,4 +62,5 @@ void MCP3x6x::config() {
 
   //LOCK --> 0xA5 enables write-access, LOCK --> 0x00 disables write-access and enables Register Configuration CRC.
   SPIWrite(mcp, _LOCK_, LOCK_CFG);  // LOCK_CFG defined in "MCP3x6x_ADC_Definitions.h" file.
+  */
 }
