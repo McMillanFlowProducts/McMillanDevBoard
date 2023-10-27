@@ -1,11 +1,11 @@
-//#define MCMILLAN_OTA
+#define MCMILLAN_OTA
 #define MCM_DEBUG
 //#define MCM_DPOT
 
 #include <Adafruit_NeoPixel.h>
-#include "McMillanOTA.cpp"
+#include "McMillanOTA.h"
 #include "DACx0501.h"
-//#include "MCP3x6x.h"
+#include "MCP3x6x.h"
 #include "AD5144A.h"
 
 #define MCM_SDA 41
@@ -18,10 +18,11 @@
 
 Adafruit_NeoPixel pixels(1, MCM_NEOPIXEL, NEO_GRB + NEO_KHZ800);
 DACx0501 dac(DAC_ADDR_AGND, MCM_SDA, MCM_SCL);
-//MCP3x6x adc(MCM_SCK, MCM_MISO, MCM_MOSI, ADC_CS);
+MCP3x6x adc(MCM_SCK, MCM_MISO, MCM_MOSI, ADC_CS);
 AD5141 dpot(0x77);
-
 McMillanOTA ota;
+
+const char * compiledOn = "compiled: " __DATE__ "\t" __TIME__;
 
 long prevMillis = 0;
 bool heartbeatLED = false;
@@ -35,6 +36,7 @@ void setup(void) {
   Serial.begin(115200);
   Serial.println();
   Serial.println("McMillan Flow DEV");
+  Serial.println(compiledOn);
 
   //pinMode(1, INPUT);  //enable analog read for valve
 
