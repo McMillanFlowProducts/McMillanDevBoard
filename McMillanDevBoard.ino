@@ -1,20 +1,14 @@
-#define MCMILLAN_OTA
+//#define MCMILLAN_OTA
 #define MCM_DEBUG
 //#define MCM_DPOT
 
 #include <Adafruit_NeoPixel.h>
+#include "McMillanPins.h"
 #include "McMillanOTA.h"
+#include "McMillanSettings.h"
 #include "DACx0501.h"
 #include "MCP3x6x.h"
 #include "AD5144A.h"
-
-#define MCM_SDA 41
-#define MCM_SCL 40
-#define MCM_SCK 36
-#define MCM_MISO 37
-#define MCM_MOSI 35
-#define MCM_NEOPIXEL 48
-#define ADC_CS 42
 
 Adafruit_NeoPixel pixels(1, MCM_NEOPIXEL, NEO_GRB + NEO_KHZ800);
 DACx0501 dac(DAC_ADDR_AGND, MCM_SDA, MCM_SCL);
