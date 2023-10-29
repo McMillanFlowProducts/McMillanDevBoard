@@ -6,6 +6,7 @@
 #include "McMillanPins.h"
 #include "McMillanOTA.h"
 #include "McMillanSettings.h"
+#include "McMillanSerial.h"
 #include "DACx0501.h"
 #include "MCP3x6x.h"
 #include "AD5144A.h"
@@ -15,32 +16,23 @@ DACx0501 dac(DAC_ADDR_AGND, MCM_SDA, MCM_SCL);
 MCP3x6x adc(MCM_SCK, MCM_MISO, MCM_MOSI, ADC_CS);
 AD5141 dpot(0x77);
 McMillanOTA ota;
-
-const char * compiledOn = "compiled: " __DATE__ "\t" __TIME__;
+McMillanSettings settings;
+McMillanSerial mcmSerial(&settings, &dac, &adc);
 
 long prevMillis = 0;
 bool heartbeatLED = false;
-bool demo = false;
-bool demoDIR = true;
-int demoValue = 0;
-
-DACx0501Config dacconfig;
 
 void setup(void) {
-  Serial.begin(115200);
-  Serial.println();
-  Serial.println("McMillan Flow DEV");
-  Serial.println(compiledOn);
+  pixels.begin();
+  pixels.setBrightness(20);
+  mcmSerial.begin();
+  Serial.printf("Settings Loaded: %d\n", settings.begin());
+  Serial.printf("SerialNumber: %s\n", settings.getSerialNumber());
 
   //pinMode(1, INPUT);  //enable analog read for valve
 
-  dacconfig.REFDIV = true;
-  dacconfig.GAIN = true;
-  dacconfig.REF_PWDWN = false;
-  dacconfig.DAC_PWDWN = false;
-
   Serial.print("DAC BEGIN: ");
-  dac.begin(dacconfig);
+  dac.begin({ true, true, false, false });
 
   dac.setValue(0x0FAA);
 
@@ -57,23 +49,18 @@ void setup(void) {
   Serial.println();
 #endif
 
-  pixels.begin();
-  pixels.setBrightness(20);
-
   ota.begin();
 
-  delay(5000);
+  //delay(5000);
+
+  Serial.println("Leaving setup()...");
 }
 
 void heartbeat() {
   if (millis() - prevMillis >= 500) {
     // set color to red
     if (!heartbeatLED) {
-      if (!demo) {
-        pixels.fill(0x00FF00);
-      } else {
-        pixels.fill(0xFF0000);
-      }
+      pixels.fill(0x00FF00);
       pixels.show();
     } else {
       pixels.fill(0x000000);
@@ -87,86 +74,5 @@ void heartbeat() {
 void loop(void) {
   ota.loop();
   heartbeat();
-
-  while (Serial.available()) {
-    switch (Serial.read()) {
-      case 'i':
-        {
-          int value = Serial.parseInt();
-          Serial.printf("DAC: 0x%04X, %04d\n", value, value);
-          dac.setValue(value);
-        }
-        break;
-      case 'g':
-        {
-          switch (Serial.parseInt()) {
-            case 0:
-              dac.setGain(0);
-              Serial.println("GAIN 1");
-              break;
-            default:
-              dac.setGain(1);
-              Serial.println("GAIN 2");
-          }
-        }
-        break;
-      case 'r':
-        {
-          switch (Serial.parseInt()) {
-            case 0:
-              dac.setREFDIV(0);
-              Serial.println("REFDIV 1");
-              break;
-            default:
-              dac.setREFDIV(1);
-              Serial.println("REFDIV 2");
-          }
-        }
-        break;
-      case 'p':
-        {
-          switch (Serial.parseInt()) {
-            case 0:
-              dac.setREF_PWDWN(0);
-              Serial.println("IREF ON");
-              break;
-            default:
-              dac.setREF_PWDWN(1);
-              Serial.println("IREF OFF");
-          }
-        }
-        break;
-      case 'q':
-        {
-          switch (Serial.parseInt()) {
-            case 0:
-              dac.setDAC_PWDWN(0);
-              Serial.println("DAC ON");
-              break;
-            default:
-              dac.setDAC_PWDWN(1);
-              Serial.println("DAC OFF");
-          }
-        }
-        break;
-      case 'd':
-        demo = !demo;
-    }
-  }
-  if (demo) {
-    dac.setValue(demoValue);
-    if (demoDIR) {
-      demoValue += 10;
-    } else {
-      demoValue -= 10;
-    }
-    if (demoValue <= 0 || demoValue >= 0xFFFF) {
-      demoDIR = !demoDIR;
-      if (demoValue < 1) {
-        demoValue = 0;
-      } else {
-        demoValue = 0xFFFF;
-      }
-    }
-  }
+  mcmSerial.loop();
 }

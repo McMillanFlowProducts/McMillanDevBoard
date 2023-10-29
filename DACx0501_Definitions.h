@@ -39,10 +39,10 @@ static const uint8_t DAC_14 = 2;
 static const uint8_t DAC_12 = 4;
 
 struct DACx0501Config{
-bool REFDIV = true;
-bool GAIN = true;
-bool REF_PWDWN = false;
-bool DAC_PWDWN = false;
+bool REFDIV;
+bool GAIN;
+bool REF_PWDWN;
+bool DAC_PWDWN;
 };
 
 
