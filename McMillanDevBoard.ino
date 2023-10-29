@@ -1,5 +1,4 @@
 //#define MCMILLAN_OTA
-#define MCM_DEBUG
 //#define MCM_DPOT
 
 #include <Adafruit_NeoPixel.h>
@@ -17,7 +16,7 @@ MCP3x6x adc(MCM_SCK, MCM_MISO, MCM_MOSI, ADC_CS);
 AD5141 dpot(0x77);
 McMillanOTA ota;
 McMillanSettings settings;
-McMillanSerial mcmSerial(&settings, &dac, &adc);
+McMillanSerial mcmSerial(&settings, &dac, &adc, &dpot);
 
 long prevMillis = 0;
 bool heartbeatLED = false;

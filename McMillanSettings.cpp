@@ -58,7 +58,6 @@ char *McMillanSettings::getSerialNumber() {
 
 void McMillanSettings::setSerialNumber(char *_serialNumber) {
   strcpy(settings.serialNumber, _serialNumber);
-  save();
 }
 
 char *McMillanSettings::getModel() {
@@ -67,5 +66,4 @@ char *McMillanSettings::getModel() {
 
 void McMillanSettings::setModel(char *_model) {
   strcpy(settings.model, _model);
-  save();
 }

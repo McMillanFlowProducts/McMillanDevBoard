@@ -1,7 +1,7 @@
 #include "McMillanSerial.h"
 
-McMillanSerial::McMillanSerial(McMillanSettings* _settings, DACx0501* _dac, MCP3x6x* _adc)
-  : settings(_settings), dac(_dac), adc(_adc) {
+McMillanSerial::McMillanSerial(McMillanSettings* _settings, DACx0501* _dac, MCP3x6x* _adc, AD5141 *_dpot)
+  : settings(_settings), dac(_dac), adc(_adc), dpot(_dpot) {
 }
 
 void McMillanSerial::begin() {
@@ -10,9 +10,6 @@ void McMillanSerial::begin() {
   Serial.println("McMillan Flow DEV");
   Serial.println("compiled: " __DATE__ "\t" __TIME__);
   bufferIndex = 0;
-  demo = false;
-  demoDIR = true;
-  demoValue = 0;
 }
 
 void McMillanSerial::loop() {
@@ -33,103 +30,19 @@ void McMillanSerial::loop() {
         buffer[bufferIndex++] = temp;
     }
   }
-  /*
-while (Serial.available()) {
-    switch (Serial.read()) {
-      case 'i':
-        {
-          int value = Serial.parseInt();
-          Serial.printf("DAC: 0x%04X, %04d\n", value, value);
-          dac.setValue(value);
-        }
-        break;
-      case 'g':
-        {
-          switch (Serial.parseInt()) {
-            case 0:
-              dac.setGain(0);
-              Serial.println("GAIN 1");
-              break;
-            default:
-              dac.setGain(1);
-              Serial.println("GAIN 2");
-          }
-        }
-        break;
-      case 'r':
-        {
-          switch (Serial.parseInt()) {
-            case 0:
-              dac.setREFDIV(0);
-              Serial.println("REFDIV 1");
-              break;
-            default:
-              dac.setREFDIV(1);
-              Serial.println("REFDIV 2");
-          }
-        }
-        break;
-      case 'p':
-        {
-          switch (Serial.parseInt()) {
-            case 0:
-              dac.setREF_PWDWN(0);
-              Serial.println("IREF ON");
-              break;
-            default:
-              dac.setREF_PWDWN(1);
-              Serial.println("IREF OFF");
-          }
-        }
-        break;
-      case 'q':
-        {
-          switch (Serial.parseInt()) {
-            case 0:
-              dac.setDAC_PWDWN(0);
-              Serial.println("DAC ON");
-              break;
-            default:
-              dac.setDAC_PWDWN(1);
-              Serial.println("DAC OFF");
-          }
-        }
-        break;
-      case 'd':
-        demo = !demo;
-    }
-  }
-  if (demo) {
-    dac.setValue(demoValue);
-    if (demoDIR) {
-      demoValue += 10;
-    } else {
-      demoValue -= 10;
-    }
-    if (demoValue <= 0 || demoValue >= 0xFFFF) {
-      demoDIR = !demoDIR;
-      if (demoValue < 1) {
-        demoValue = 0;
-      } else {
-        demoValue = 0xFFFF;
-      }
-    }
-  }
-*/
 }
 
 void McMillanSerial::command() {
-  //Serial.println(buffer);
-  char* cmd = strtok(buffer, delim);
-  Serial.println(cmd);
+  strcpy(prevBuffer, buffer);
+  char* cmd = strtok(buffer, " ");
   if (cmd != NULL) {
     char* args[MAXARGS];  //array of string ptrs
     int i = 0;
-    args[i] = strtok(NULL, delim);
+    args[i] = strtok(NULL, " ");
     while (args[i] != NULL && i < MAXARGS - 1) {
       //Serial.println(args[i]);
       i++;
-      args[i] = strtok(NULL, delim);
+      args[i] = strtok(NULL, " ");
     }
     if (strcasecmp(cmd, "set")) {
       cmd_set(args);
@@ -141,15 +54,17 @@ void McMillanSerial::command() {
       settings->load();
     } else if (strcasecmp(cmd, "defaults")) {
       settings->defaults();
+    } else {
+      Serial.printf("Unknown Command: %s\n", prevBuffer);
     }
   } else {
-    Serial.println("NO CMD FOUND");
+    Serial.printf("Unknown Command: %s\n", prevBuffer);
   }
 }
 
 void McMillanSerial::cmd_set(char* args[]) {
   if (args[0] == NULL) {
-    Serial.println("ERR: Not enough arguments");
+    Serial.println("Not enough arguments");
   } else {
     uint8_t totalArgs = 0;
     for (int i = 0; i < MAXARGS && args[i] != NULL; i++) {
@@ -160,6 +75,8 @@ void McMillanSerial::cmd_set(char* args[]) {
         {
           if (strcasecmp(args[0], "flag")) {
             Serial.println("Flag set");
+          } else {
+            Serial.printf("Unknown Command: %s\n", prevBuffer);
           }
         }
         break;
@@ -167,15 +84,43 @@ void McMillanSerial::cmd_set(char* args[]) {
         {
           if (strcasecmp(args[0], "sn")) {
             settings->setSerialNumber(args[1]);
-            Serial.print("Set SerialNumber: ");
-          } else if (strcasecmp(args[0], "model")){
+            Serial.printf("Set SerialNumber: %s\n", args[1]);
+          } else if (strcasecmp(args[0], "model")) {
             settings->setModel(args[1]);
-            Serial.print("Set Model: ");
+            Serial.printf("Set Model: %s\n", args[1]);
+          } else {
+            Serial.printf("Unknown Command: %s\n", prevBuffer);
           }
-          Serial.println(args[1]);
         }
         break;
       default:
+        if (strcasecmp(args[0], "dac")) {
+          int state = checkValue(args[2]);
+          if (strcasecmp(args[1], "value")) {
+            dac->setValue(atoi(args[2]));
+            Serial.printf("Set DAC Value: %d\n", atoi(args[2]));
+          } else if (state != -1) {
+            if (strcasecmp(args[1], "refdiv")) {
+              dac->setREFDIV(state);
+              Serial.printf("Set DAC REFDIV: %d\n", state);
+            } else if (strcasecmp(args[1], "gain")) {
+              dac->setGain(state);
+              Serial.printf("Set DAC GAIN: %d\n", state);
+            } else if (strcasecmp(args[1], "refpwr")) {
+              dac->setREF_PWDWN(state);
+              Serial.printf("Set DAC PWR: %d\n", state);
+            } else if (strcasecmp(args[1], "dacpwr")) {
+              dac->setDAC_PWDWN(state);
+              Serial.printf("Set DAC REF PWR: %d\n", state);
+            } else {
+              Serial.printf("Unknown Command: %s\n", prevBuffer);
+            }
+          } else {
+            Serial.printf("Unknown Value: %s\n", args[2]);
+          }
+        } else {
+          Serial.printf("Unknown Command: %s\n", prevBuffer);
+        }
         break;
     }
   }
@@ -196,12 +141,47 @@ void McMillanSerial::cmd_get(char* args[]) {
             Serial.printf("SerialNumber: %s\n", settings->getSerialNumber());
           } else if (strcasecmp(args[0], "model")) {
             Serial.printf("Model: %s\n", settings->getModel());
+          } else if (strcasecmp(args[0], "dac")) {
+            Serial.printf("DAC Value: %d\n", dac->getValue());
+          } else {
+            Serial.printf("Unknown Command: %s\n", prevBuffer);
+          }
+        }
+        break;
+      case 2:
+        {
+          if (strcasecmp(args[0], "dac")) {
+            if (strcasecmp(args[1], "refdiv")) {
+              Serial.printf("DAC REFDIV: %d\n", dac->getREFDIV());
+            } else if (strcasecmp(args[1], "gain")) {
+              Serial.printf("DAC GAIN: %d\n", dac->getGain());
+            } else if (strcasecmp(args[1], "refpwr")) {
+              Serial.printf("DAC REF PWDWN: %d\n", dac->getREF_PWDWN());
+            } else if (strcasecmp(args[1], "dacpwr")) {
+              Serial.printf("DAC PWRDWN: %d\n", dac->getDAC_PWDWN());
+            } else if (strcasecmp(args[1], "value")) {
+              Serial.printf("DAC Value: %d\n", dac->getValue());
+            } else {
+              Serial.printf("Unknown Command: %s\n", prevBuffer);
+            }
+          } else {
+            Serial.printf("Unknown Command: %s\n", prevBuffer);
           }
         }
         break;
       default:
         break;
     }
+  }
+}
+
+int McMillanSerial::checkValue(char* value) {
+  if (strcasecmp(value, "on") || strcasecmp(value, "1")) {
+    return 1;
+  } else if (strcasecmp(value, "off") || strcasecmp(value, "0")) {
+    return 0;
+  } else {
+    return -1;
   }
 }
 
