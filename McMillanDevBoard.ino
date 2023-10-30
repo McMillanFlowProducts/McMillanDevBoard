@@ -1,5 +1,6 @@
 //#define MCMILLAN_OTA
 //#define MCM_DPOT
+#define MCM_DEBUG
 
 #include <Adafruit_NeoPixel.h>
 #include "McMillanPins.h"
@@ -25,15 +26,21 @@ void setup(void) {
   pixels.begin();
   pixels.setBrightness(20);
   mcmSerial.begin();
+
+#ifdef MCM_DEBUG
   Serial.printf("Settings Loaded: %d\n", settings.begin());
+  Serial.printf("Model: %s\n", settings.getModel());
   Serial.printf("SerialNumber: %s\n", settings.getSerialNumber());
+  Serial.println("compiled: " __DATE__ " " __TIME__);
 
   //pinMode(1, INPUT);  //enable analog read for valve
 
-  Serial.print("DAC BEGIN: ");
-  dac.begin({ true, true, false, false });
-
+  Serial.printf("DAC BEGIN: %d\n", dac.begin({ true, true, false, false }));
   dac.setValue(0x0FAA);
+
+  adc.begin();
+  Serial.printf("ADC BEGIN: %d\n", 1);
+
 
 #ifdef MCM_DPOT
   Serial.println("DPOT DEBUG:");
@@ -46,13 +53,19 @@ void setup(void) {
   Serial.print("MAXVALUE:\t");
   Serial.println(dpot.maxValue());
   Serial.println();
-#endif
-
-  ota.begin();
-
-  //delay(5000);
+#endif  //MCM_DPOT
 
   Serial.println("Leaving setup()...");
+
+#else  //MCM_DEBUG
+  settings.begin();
+  dac.begin();
+  adc.begin();
+  ota.begin();
+#ifdef MCM_DPOT
+  dpot.begin();
+#endif  //MCM_DPOT
+#endif  //MCM_DEBUG
 }
 
 void heartbeat() {

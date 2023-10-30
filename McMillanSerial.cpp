@@ -5,10 +5,9 @@ McMillanSerial::McMillanSerial(McMillanSettings* _settings, DACx0501* _dac, MCP3
 }
 
 void McMillanSerial::begin() {
+  factory = false;
   Serial.begin(115200);
   Serial.println();
-  Serial.println("McMillan Flow DEV");
-  Serial.println("compiled: " __DATE__ "\t" __TIME__);
   bufferIndex = 0;
 }
 
@@ -50,10 +49,13 @@ void McMillanSerial::command() {
       cmd_get(args);
     } else if (strcasecmp(cmd, "save")) {
       settings->save();
+      Serial.println("Saved Settings");
     } else if (strcasecmp(cmd, "load")) {
       settings->load();
-    } else if (strcasecmp(cmd, "defaults")) {
+      Serial.println("Loaded Settings");
+    } else if (strcasecmp(cmd, "defaults") && factory) {
       settings->defaults();
+      Serial.println("Loaded Defaults");
     } else {
       Serial.printf("Unknown Command: %s\n", prevBuffer);
     }
@@ -82,19 +84,24 @@ void McMillanSerial::cmd_set(char* args[]) {
         break;
       case 2:
         {
-          if (strcasecmp(args[0], "sn")) {
+          if (strcasecmp(args[0], "sn") && factory) {
             settings->setSerialNumber(args[1]);
             Serial.printf("Set SerialNumber: %s\n", args[1]);
-          } else if (strcasecmp(args[0], "model")) {
+          } else if (strcasecmp(args[0], "model") && factory) {
             settings->setModel(args[1]);
             Serial.printf("Set Model: %s\n", args[1]);
+          }  else if (strcasecmp(args[0], "factory")) {
+            if (strcmp(args[1], "McM!ll@n") == 0){
+              factory = true;
+              Serial.println("Factory Mode Enabled");
+            }
           } else {
             Serial.printf("Unknown Command: %s\n", prevBuffer);
           }
         }
         break;
       default:
-        if (strcasecmp(args[0], "dac")) {
+        if (strcasecmp(args[0], "dac") && factory) {
           int state = checkValue(args[2]);
           if (strcasecmp(args[1], "value")) {
             dac->setValue(atoi(args[2]));

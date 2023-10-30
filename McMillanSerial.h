@@ -20,6 +20,7 @@ protected:
   DACx0501 *dac;
   MCP3x6x *adc;
   AD5141 *dpot;
+  bool factory;
   char buffer[BUFFERSIZE];
   char prevBuffer[BUFFERSIZE];
   uint8_t bufferIndex;

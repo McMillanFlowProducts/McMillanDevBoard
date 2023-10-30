@@ -45,7 +45,7 @@ bool McMillanSettings::save() {
 
 void McMillanSettings::defaults() {
   Serial.println("Loading Defaults...");
-  strcpy(settings.model, "MCMILLAN DEV");
+  strcpy(settings.model, "McMillan DEV Board");
   strcpy(settings.serialNumber, "TEST12345678");
   settings.sensorCalibration = 1.0;
   settings.setpointCalibration = 1.0;

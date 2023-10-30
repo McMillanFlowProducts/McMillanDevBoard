@@ -17,23 +17,22 @@ void DACx0501::config(DACx0501Config _config) {
 }
 
 bool DACx0501::getRES() {
-  //Serial.println(read(DAC_CMD_DEVID) & DAC_REG_RES, HEX);
   switch (read(DAC_CMD_DEVID) & DAC_REG_RES) {
     case DAC_REG_RES12:
       bits = DAC_12;
-      Serial.println("12BITDAC");
+      //Serial.println("12BITDAC");
       break;
     case DAC_REG_RES14:
       bits = DAC_14;
-      Serial.println("14BITDAC");
+      //Serial.println("14BITDAC");
       break;
     case DAC_REG_RES16:
       bits = DAC_16;
-      Serial.println("16BITDAC");
+      //Serial.println("16BITDAC");
       break;
     default:
       bits = -1;
-      Serial.println("DAC NOT FOUND");
+      //Serial.println("DAC NOT FOUND");
       return false;
   }
   return true;
@@ -106,18 +105,15 @@ bool DACx0501::getAlarm() {
 }
 
 uint16_t DACx0501::read(uint8_t cmd) {
-  if (bits != -1) {
-    Wire.beginTransmission(address);
-    Wire.write(cmd);
-    Wire.endTransmission();
+  Wire.beginTransmission(address);
+  Wire.write(cmd);
+  Wire.endTransmission();
 
-    Wire.requestFrom(address, 2);
-    uint16_t reply;
-    reply = Wire.read() << 8;
-    reply |= Wire.read();
-    return reply;
-  }
-  return 0;
+  Wire.requestFrom(address, 2);
+  uint16_t reply;
+  reply = Wire.read() << 8;
+  reply |= Wire.read();
+  return reply;
 }
 
 void DACx0501::write(uint8_t cmd, uint16_t data) {
@@ -126,4 +122,8 @@ void DACx0501::write(uint8_t cmd, uint16_t data) {
   Wire.write(data >> 8);
   Wire.write(data & 0xFF);
   Wire.endTransmission();
+}
+
+bool DACx0501::isConnected() {
+  return bits != -1;
 }
