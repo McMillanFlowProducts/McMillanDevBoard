@@ -6,6 +6,7 @@
 struct McMSettings {
   char model[32];
   char serialNumber[32];
+  char address;
   double sensorCalibration;
   double setpointCalibration;
   double DACCalibration;
@@ -17,11 +18,13 @@ public:
   bool begin();
   bool load();
   bool save();
+  void defaults();
   void setSerialNumber(char *_serialNumber);
   char *getSerialNumber();
   void setModel(char *_model);
   char *getModel();
-  void defaults();
+  char getAddress();
+  void setAddress(char _address);
 protected:
   bool active;
   Preferences *prefs;

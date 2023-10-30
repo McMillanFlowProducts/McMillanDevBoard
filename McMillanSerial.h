@@ -11,23 +11,26 @@ const char MAXARGS = 4;
 
 class McMillanSerial {
 public:
-  McMillanSerial(McMillanSettings *_settings, DACx0501 *_dac, MCP3x6x *_adc, AD5141 *_dpot);
+  McMillanSerial(HardwareSerial *_Serial, McMillanSettings *_settings, DACx0501 *_dac, MCP3x6x *_adc, AD5141 *_dpot, bool _multiple = false);
   void begin();
+  void begin(int baud);
+  void begin(int baud, int rx, int tx);
   void loop();
-  bool strcasecmp(char *string1, char *string2);
+  HardwareSerial *Serial;
 protected:
   McMillanSettings *settings;
   DACx0501 *dac;
   MCP3x6x *adc;
   AD5141 *dpot;
-  bool factory;
+  bool factory, multiple;
   char buffer[BUFFERSIZE];
   char prevBuffer[BUFFERSIZE];
   uint8_t bufferIndex;
   void command();
   void cmd_set(char *args[]);
   void cmd_get(char *args[]);
-  int checkValue(char* value);
+  int checkValue(char *value);
+  bool strcasecmp(char *string1, char *string2);
 };
 
 #endif  //MCMILLANSERIAL_H
