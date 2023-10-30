@@ -10,6 +10,7 @@ struct McMSettings {
   double sensorCalibration;
   double setpointCalibration;
   double DACCalibration;
+  double digitalSetpoint;
 };
 
 class McMillanSettings {
@@ -25,6 +26,14 @@ public:
   char *getModel();
   char getAddress();
   void setAddress(char _address);
+  double getSensorCalibration();
+  double getSetpointCalibration();
+  double getDACCalibration();
+  double getDigitalSetpoint();
+  void setSensorCalibration(double value);
+  void setSetpointCalibration(double value);
+  void setDACCalibration(double value);
+  void setDigitalSetpoint(double value);
 protected:
   bool active;
   Preferences *prefs;

@@ -11,12 +11,12 @@ const char MAXARGS = 4;
 
 class McMillanSerial {
 public:
-  McMillanSerial(HardwareSerial *_Serial, McMillanSettings *_settings, DACx0501 *_dac, MCP3x6x *_adc, AD5141 *_dpot, bool _multiple = false);
+  McMillanSerial(HWCDC *_Serial, McMillanSettings *_settings, DACx0501 *_dac, MCP3x6x *_adc, AD5141 *_dpot, bool _multiple = false);
   void begin();
   void begin(int baud);
-  void begin(int baud, int rx, int tx);
+  //void begin(int baud, int rx, int tx);
   void loop();
-  HardwareSerial *Serial;
+  HWCDC *Serial;
 protected:
   McMillanSettings *settings;
   DACx0501 *dac;

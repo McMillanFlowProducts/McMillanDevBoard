@@ -17,9 +17,9 @@ MCP3x6x adc(MCM_SCK, MCM_MISO, MCM_MOSI, ADC_CS);
 AD5141 dpot(0x77);
 McMillanOTA ota;
 McMillanSettings settings;
-McMillanSerial mcmUSB(&Serial0, &settings, &dac, &adc, &dpot);
-McMillanSerial mcmRS485(&Serial1, &settings, &dac, &adc, &dpot, true);
-McMillanSerial *coms[2] = {&mcmUSB, &mcmRS485};
+McMillanSerial mcmUSB(&Serial, &settings, &dac, &adc, &dpot);
+//McMillanSerial mcmRS485(&Serial0, &settings, &dac, &adc, &dpot, true);
+//McMillanSerial *coms[2] = {&mcmUSB, &mcmRS485};
 
 long prevMillis = 0;
 bool heartbeatLED = false;
@@ -28,7 +28,7 @@ void setup(void) {
   pixels.begin();
   pixels.setBrightness(20);
   mcmUSB.begin();
-  mcmRS485.begin();
+  //mcmRS485.begin();
 
 #ifdef MCM_DEBUG
   Serial.printf("Settings Loaded: %d\n", settings.begin());
@@ -90,5 +90,5 @@ void loop(void) {
   ota.loop();
   heartbeat();
   mcmUSB.loop();
-  mcmRS485.loop();
+  //mcmRS485.loop();
 }

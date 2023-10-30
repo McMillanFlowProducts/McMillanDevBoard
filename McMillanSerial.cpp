@@ -1,6 +1,6 @@
 #include "McMillanSerial.h"
 
-McMillanSerial::McMillanSerial(HardwareSerial* _Serial, McMillanSettings* _settings, DACx0501* _dac, MCP3x6x* _adc, AD5141* _dpot, bool _multiple)
+McMillanSerial::McMillanSerial(HWCDC* _Serial, McMillanSettings* _settings, DACx0501* _dac, MCP3x6x* _adc, AD5141* _dpot, bool _multiple)
   : Serial(_Serial), settings(_settings), dac(_dac), adc(_adc), dpot(_dpot), multiple(_multiple) {
 }
 
@@ -18,12 +18,13 @@ void McMillanSerial::begin(int baud) {
   bufferIndex = 0;
 }
 
+/*
 void McMillanSerial::begin(int baud, int rx, int tx) {
   factory = false;
   Serial->begin(baud, SERIAL_8N1, rx, tx);
   Serial->println();
   bufferIndex = 0;
-}
+}*/
 
 void McMillanSerial::loop() {
   if (Serial->available()) {

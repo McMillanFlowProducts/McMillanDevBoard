@@ -26,6 +26,7 @@ bool McMillanSettings::load() {
     prefs->getDouble("sensorCali", settings.sensorCalibration);
     prefs->getDouble("setpointCali", settings.setpointCalibration);
     prefs->getDouble("dacCali", settings.DACCalibration);
+    prefs->getDouble("digital", settings.digitalSetpoint);
     if (strlen(settings.serialNumber) > 0) {
       return true;
     }
@@ -41,6 +42,7 @@ bool McMillanSettings::save() {
     prefs->putDouble("sensorCali", settings.sensorCalibration);
     prefs->putDouble("setpointCali", settings.setpointCalibration);
     prefs->putDouble("dacCali", settings.DACCalibration);
+    prefs->putDouble("digital", settings.digitalSetpoint);
   }
   return false;
 }
@@ -53,6 +55,7 @@ void McMillanSettings::defaults() {
   settings.sensorCalibration = 1.0;
   settings.setpointCalibration = 1.0;
   settings.DACCalibration = 1.0;
+  settings.digitalSetpoint = 1.0;
 }
 
 char *McMillanSettings::getSerialNumber() {
@@ -77,4 +80,36 @@ char McMillanSettings::getAddress() {
 
 void McMillanSettings::setAddress(char _address) {
   settings.address = _address;
+}
+
+double McMillanSettings::getSensorCalibration() {
+  return settings.sensorCalibration;
+}
+
+double McMillanSettings::getSetpointCalibration() {
+  return settings.setpointCalibration;
+}
+
+double McMillanSettings::getDACCalibration() {
+  return settings.DACCalibration;
+}
+
+double McMillanSettings::getDigitalSetpoint() {
+  return settings.digitalSetpoint;
+}
+
+void McMillanSettings::setSensorCalibration(double value) {
+  settings.sensorCalibration = value;
+}
+
+void McMillanSettings::setSetpointCalibration(double value) {
+  settings.setpointCalibration = value;
+}
+
+void McMillanSettings::setDACCalibration(double value) {
+  settings.DACCalibration = value;
+}
+
+void McMillanSettings::setDigitalSetpoint(double value) {
+  settings.digitalSetpoint = value;
 }
