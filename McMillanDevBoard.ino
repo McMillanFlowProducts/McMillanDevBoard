@@ -12,8 +12,9 @@
 #include "AD5144A.h"
 
 Adafruit_NeoPixel pixels(1, MCM_NEOPIXEL, NEO_GRB + NEO_KHZ800);
+SPIClass spi = SPIClass(HSPI);
 DACx0501 dac(DAC_ADDR_AGND, MCM_SDA, MCM_SCL);
-MCP3x6x adc(MCM_SCK, MCM_MISO, MCM_MOSI, ADC_CS);
+MCP3464 adc(ADC_CS, &spi, MCM_MOSI, MCM_MISO, MCM_SCK);
 AD5141 dpot(0x77);
 McMillanOTA ota;
 McMillanSettings settings;
@@ -39,10 +40,9 @@ void setup(void) {
   //pinMode(1, INPUT);  //enable analog read for valve
 
   Serial.printf("DAC BEGIN: %d\n", dac.begin({ true, true, false, false }));
-  dac.setValue(0x0FAA);
+  dac.setValue(0xFFAA);
 
-  adc.begin();
-  Serial.printf("ADC BEGIN: %d\n", 1);
+  Serial.printf("ADC BEGIN: %d\n", adc.begin());
 
 
 #ifdef MCM_DPOT
@@ -57,7 +57,7 @@ void setup(void) {
   Serial.println(dpot.maxValue());
   Serial.println();
 #endif  //MCM_DPOT
-
+  delay(2000);
   Serial.println("Leaving setup()...");
 
 #else  //MCM_DEBUG
@@ -91,4 +91,15 @@ void loop(void) {
   heartbeat();
   mcmUSB.loop();
   //mcmRS485.loop();
+
+/*
+  int32_t adcdata = adc.analogRead(MCP_CH0);
+  // Convert the analog reading
+  double voltage = adcdata * adc.getReference() / adc.getMaxValue();
+  // print out the value you read:
+  Serial.print("voltage: ");
+  Serial.println(voltage, 10);
+
+  delay(100);
+*/
 }

@@ -7,6 +7,7 @@ McMillanSerial::McMillanSerial(HWCDC* _Serial, McMillanSettings* _settings, DACx
 void McMillanSerial::begin() {
   factory = false;
   Serial->begin(115200);
+  while(!Serial);
   Serial->println();
   bufferIndex = 0;
 }
