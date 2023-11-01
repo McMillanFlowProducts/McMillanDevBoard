@@ -19,7 +19,7 @@ AD5141 dpot(0x77);
 McMillanOTA ota;
 McMillanSettings settings;
 McMillanSerial mcmUSB(&Serial, &settings, &dac, &adc, &dpot);
-//McMillanSerial mcmRS485(&Serial0, &settings, &dac, &adc, &dpot, true);
+McMillanSerial mcmRS485(&Serial0, &settings, &dac, &adc, &dpot, true);
 //McMillanSerial *coms[2] = {&mcmUSB, &mcmRS485};
 
 long prevMillis = 0;

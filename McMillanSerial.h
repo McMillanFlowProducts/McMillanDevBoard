@@ -11,18 +11,23 @@ const char MAXARGS = 4;
 
 class McMillanSerial {
 public:
-  McMillanSerial(HWCDC *_Serial, McMillanSettings *_settings, DACx0501 *_dac, MCP3x6x *_adc, AD5141 *_dpot, bool _multiple = false);
+  McMillanSerial(HWCDC *_USB, McMillanSettings *_settings, DACx0501 *_dac, MCP3x6x *_adc, AD5141 *_dpot, bool _multiple = false);
+  McMillanSerial(HardwareSerial *_Serial, McMillanSettings *_settings, DACx0501 *_dac, MCP3x6x *_adc, AD5141 *_dpot, bool _multiple = false);
   void begin();
   void begin(int baud);
-  //void begin(int baud, int rx, int tx);
+  void begin(int baud, int rx, int tx);
   void loop();
-  HWCDC *Serial;
+  size_t print(char *_print);
+  void println(char *_print);
+  void println(int _print);
+  HWCDC *USB;
+  HardwareSerial *Serial;
 protected:
   McMillanSettings *settings;
   DACx0501 *dac;
   MCP3x6x *adc;
   AD5141 *dpot;
-  bool factory, multiple;
+  bool factory, multiple, USBMode;
   char buffer[BUFFERSIZE];
   char prevBuffer[BUFFERSIZE];
   uint8_t bufferIndex;
