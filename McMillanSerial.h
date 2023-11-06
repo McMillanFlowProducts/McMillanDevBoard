@@ -17,8 +17,10 @@ public:
   void begin(int baud);
   void begin(int baud, int rx, int tx);
   void loop();
-  size_t print(char *_print);
-  void println(char *_print);
+  void print(const char *_print);
+  void printf(const char* format, const char*_print);
+  void printf(const char* format, int _print);
+  void println(const char *_print);
   void println(int _print);
   HWCDC *USB;
   HardwareSerial *Serial;
@@ -35,7 +37,7 @@ protected:
   void cmd_set(char *args[]);
   void cmd_get(char *args[]);
   int checkValue(char *value);
-  bool strcasecmp(char *string1, char *string2);
+  bool strcasecmp(char *string1, const char *string2);
 };
 
 #endif  //MCMILLANSERIAL_H

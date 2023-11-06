@@ -145,8 +145,7 @@ void McMillanSerial::cmd_set(char* args[]) {
           if (strcasecmp(args[0], "flag")) {
             println("Flag set");
           } else {
-            print("Unknown Command: ");
-            println(prevBuffer);
+            printf("Unknown Command: %s\n", prevBuffer);
           }
         }
         break;
@@ -157,15 +156,14 @@ void McMillanSerial::cmd_set(char* args[]) {
             println(args[1]);
           } else if (strcasecmp(args[0], "model") && factory) {
             settings->setModel(args[1]);
-            print(args[1]);
+            println(args[1]);
           } else if (strcasecmp(args[0], "factory")) {
             if (strcmp(args[1], "McM!ll@n") == 0) {
               factory = true;
               println("Factory Mode Enabled");
             }
           } else {
-            print("Unknown Command: ");
-            println(prevBuffer);
+            printf("Unknown Command: %s\n", prevBuffer);
           }
         }
         break;
@@ -174,36 +172,30 @@ void McMillanSerial::cmd_set(char* args[]) {
           int state = checkValue(args[2]);
           if (strcasecmp(args[1], "value")) {
             dac->setValue(atoi(args[2]));
-            print("Set DAC Value: ");
-            println(atoi(args[2]));
+            printf("Set DAC Value: %d\n", atoi(args[2]));
           } else if (state != -1) {
             if (strcasecmp(args[1], "refdiv")) {
               dac->setREFDIV(state);
-              print("Set DAC REFDIV: ");
-              println(state);
+              printf("Set DAC REFDIV: %d\n", state);
             } else if (strcasecmp(args[1], "gain")) {
               dac->setGain(state);
-              print("Set DAC GAIN: ");
-              println(state);
+              printf("Set DAC GAIN: %d\n", state);
             } else if (strcasecmp(args[1], "refpwr")) {
               dac->setREF_PWDWN(state);
-              print("Set DAC PWR: ");
-              println(state);
+              printf("Set DAC PWR: %d\n", state);
             } else if (strcasecmp(args[1], "dacpwr")) {
               dac->setDAC_PWDWN(state);
-              print("Set DAC REF PWR: ");
-              println(state);
+              printf("Set DAC REF PWR: %d\n", state);
             } else {
-              print("Unknown Command: ");
-              println(prevBuffer);
+              printf("Unknown Command: %s\n", prevBuffer);
             }
           } else {
-            print("Unknown Value: %s\n");
-            println(args[2]);
+            printf("Unknown Value: %s\n", args[2]);
           }
+        } else if (strcasecmp(args[0], "adc") && factory) {
+          println("Not yet implemented");
         } else {
-          print("Unknown Command: ");
-          println(prevBuffer);
+          printf("Unknown Command: %s\n", prevBuffer);
         }
         break;
     }
@@ -212,7 +204,7 @@ void McMillanSerial::cmd_set(char* args[]) {
 
 void McMillanSerial::cmd_get(char* args[]) {
   if (args[0] == NULL) {
-    println("ERR: Not enough arguments");
+    println("Not enough arguments");
   } else {
     uint8_t totalArgs = 0;
     for (int i = 0; i < MAXARGS && args[i] != NULL; i++) {
@@ -222,14 +214,13 @@ void McMillanSerial::cmd_get(char* args[]) {
       case 1:
         {
           if (strcasecmp(args[0], "sn")) {
-            Serial->printf("SerialNumber: %s\n", settings->getSerialNumber());
+            printf("SerialNumber: %s\n", settings->getSerialNumber());
           } else if (strcasecmp(args[0], "model")) {
-            Serial->printf("Model: %s\n", settings->getModel());
+            printf("Model: %s\n", settings->getModel());
           } else if (strcasecmp(args[0], "dac")) {
-            Serial->printf("DAC Value: %d\n", dac->getValue());
+            printf("DAC Value: %d\n", dac->getValue());
           } else {
-            print("Unknown Command: ");
-            println(prevBuffer);
+            printf("Unknown Command: %s\n", prevBuffer);
           }
         }
         break;
@@ -237,22 +228,22 @@ void McMillanSerial::cmd_get(char* args[]) {
         {
           if (strcasecmp(args[0], "dac")) {
             if (strcasecmp(args[1], "refdiv")) {
-              Serial->printf("DAC REFDIV: %d\n", dac->getREFDIV());
+              printf("DAC REFDIV: %d\n", dac->getREFDIV());
             } else if (strcasecmp(args[1], "gain")) {
-              Serial->printf("DAC GAIN: %d\n", dac->getGain());
+              printf("DAC GAIN: %d\n", dac->getGain());
             } else if (strcasecmp(args[1], "refpwr")) {
-              Serial->printf("DAC REF PWDWN: %d\n", dac->getREF_PWDWN());
+              printf("DAC REF PWDWN: %d\n", dac->getREF_PWDWN());
             } else if (strcasecmp(args[1], "dacpwr")) {
-              Serial->printf("DAC PWRDWN: %d\n", dac->getDAC_PWDWN());
+              printf("DAC PWRDWN: %d\n", dac->getDAC_PWDWN());
             } else if (strcasecmp(args[1], "value")) {
-              Serial->printf("DAC Value: %d\n", dac->getValue());
+              printf("DAC Value: %d\n", dac->getValue());
             } else {
-              print("Unknown Command: ");
-              println(prevBuffer);
+              printf("Unknown Command: %s\n", prevBuffer);
             }
+          } else if (strcasecmp(args[0], "adc") && factory) {
+            println("Not yet implemented");
           } else {
-            print("Unknown Command: ");
-            println(prevBuffer);
+            printf("Unknown Command: %s\n", prevBuffer);
           }
         }
         break;
@@ -272,22 +263,38 @@ int McMillanSerial::checkValue(char* value) {
   }
 }
 
-bool McMillanSerial::strcasecmp(char* string1, char* string2) {
+bool McMillanSerial::strcasecmp(char* string1, const char* string2) {
   for (uint8_t cnt = 0; cnt < strlen(string1); cnt++) {
     string1[cnt] = tolower(string1[cnt]);
   }
   return strcmp(string1, string2) == 0;
 }
 
-size_t McMillanSerial::print(char* _print) {
+void McMillanSerial::print(const char* _print) {
   if (USBMode) {
-    return USB->print(_print);
+    USB->print(_print);
   } else {
-    return Serial->print(_print);
+    Serial->print(_print);
   }
 }
 
-void McMillanSerial::println(char* _print) {
+void McMillanSerial::printf(const char* format, const char* _print) {
+  if (USBMode) {
+    USB->printf(format, _print);
+  } else {
+    Serial->printf(format, _print);
+  }
+}
+
+void McMillanSerial::printf(const char* format, int _print) {
+  if (USBMode) {
+    USB->printf(format, _print);
+  } else {
+    Serial->printf(format, _print);
+  }
+}
+
+void McMillanSerial::println(const char* _print) {
   if (USBMode) {
     USB->println(_print);
   } else {

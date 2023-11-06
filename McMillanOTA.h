@@ -1,12 +1,16 @@
 #ifndef MCMILLAN_OTA_H
 #define MCMILLAN_OTA_H
 
-#ifdef MCMILLAN_OTA
+#define MCM_OTA
+
+#ifdef MCM_OTA
 #include <WiFi.h>
 #include <WiFiClient.h>
 #include <WebServer.h>
 #include <ESPmDNS.h>
 #include <Update.h>
+
+WebServer server(80);
 
 class McMillanOTA {
 public:
@@ -14,11 +18,12 @@ public:
   void begin();
   void loop();
 protected:
-  WebServer* server();
   const char* host = "McM-ESP32-DEV";
   const char* ssid = "McMillan Domain";
   const char* password = "McM!ll@n";
-  const char* loginIndex =
+};
+
+const char* loginIndex =
     "<form name='loginForm'>"
     "<table width='20%' bgcolor='A09F9F' align='center'>"
     "<tr>"
@@ -59,6 +64,7 @@ protected:
     "}"
     "}"
     "</script>";
+    
   const char* serverIndex =
     "<script src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>"
     "<form method='POST' action='#' enctype='multipart/form-data' id='upload_form'>"
@@ -95,7 +101,6 @@ protected:
     "});"
     "});"
     "</script>";
-};
 #else
 class McMillanOTA {
 public:
@@ -103,6 +108,6 @@ public:
   void begin();
   void loop();
 };
-#endif  //MCMILLAN_OTA
+#endif  //MCM_OTA
 
 #endif  //MCMILLAN_OTA_H

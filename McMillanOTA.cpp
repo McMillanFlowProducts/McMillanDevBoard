@@ -2,10 +2,10 @@
 
 McMillanOTA::McMillanOTA() {}
 
-#ifdef MCMILLAN_OTA
+#ifdef MCM_OTA
 void McMillanOTA::begin() {
   // Connect to WiFi network
-  server = new WebServer(80);
+  //server = new WebServer();
   WiFi.begin(ssid, password);
   Serial.println("");
 
@@ -29,23 +29,23 @@ void McMillanOTA::begin() {
   }
   Serial.println("mDNS responder started");
   /*return index page which is stored in serverIndex */
-  server->on("/", HTTP_GET, []() {
-    server->sendHeader("Connection", "close");
-    server->send(200, "text/html", loginIndex);
+  server.on("/", HTTP_GET, []() {
+    server.sendHeader("Connection", "close");
+    server.send(200, "text/html", loginIndex);
   });
-  server->on("/serverIndex", HTTP_GET, []() {
-    server->sendHeader("Connection", "close");
-    server->send(200, "text/html", serverIndex);
+  server.on("/serverIndex", HTTP_GET, []() {
+    server.sendHeader("Connection", "close");
+    server.send(200, "text/html", serverIndex);
   });
   /*handling uploading firmware file */
-  server->on(
+  server.on(
     "/update", HTTP_POST, []() {
-      server->sendHeader("Connection", "close");
-      server->send(200, "text/plain", (Update.hasError()) ? "FAIL" : "OK");
+      server.sendHeader("Connection", "close");
+      server.send(200, "text/plain", (Update.hasError()) ? "FAIL" : "OK");
       ESP.restart();
     },
     []() {
-      HTTPUpload& upload = server->upload();
+      HTTPUpload& upload = server.upload();
       if (upload.status == UPLOAD_FILE_START) {
         Serial.printf("Update: %s\n", upload.filename.c_str());
         if (!Update.begin(UPDATE_SIZE_UNKNOWN)) {  //start with max available size
@@ -64,12 +64,16 @@ void McMillanOTA::begin() {
         }
       }
     });
-  server->begin();
+  server.begin();
 }
+
 void McMillanOTA::loop() {
-  server->handleClient();
+  server.handleClient();
 }
-#else
-void McMillanOTA::begin() {}
+
+#else //MCM_OTA
+void McMillanOTA::begin() {
+  Serial.println("Wrong BEGIN");
+}
 void McMillanOTA::loop() {}
-#endif  //MCMILLAN_OTA
+#endif  //MCM_OTA

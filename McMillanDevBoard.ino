@@ -1,6 +1,5 @@
-//#define MCMILLAN_OTA
-//#define MCM_DPOT
 #define MCM_DEBUG
+//#define MCM_DPOT
 
 #include <Adafruit_NeoPixel.h>
 #include "McMillanPins.h"
@@ -16,10 +15,10 @@ SPIClass spi = SPIClass(HSPI);
 DACx0501 dac(DAC_ADDR_AGND, MCM_SDA, MCM_SCL);
 MCP3464 adc(ADC_CS, &spi, MCM_MOSI, MCM_MISO, MCM_SCK);
 AD5141 dpot(0x77);
-McMillanOTA ota;
 McMillanSettings settings;
 McMillanSerial mcmUSB(&Serial, &settings, &dac, &adc, &dpot);
 McMillanSerial mcmRS485(&Serial0, &settings, &dac, &adc, &dpot, true);
+McMillanOTA ota;
 //McMillanSerial *coms[2] = {&mcmUSB, &mcmRS485};
 
 long prevMillis = 0;
@@ -29,7 +28,7 @@ void setup(void) {
   pixels.begin();
   pixels.setBrightness(20);
   mcmUSB.begin();
-  //mcmRS485.begin();
+  mcmRS485.begin();
 
 #ifdef MCM_DEBUG
   Serial.printf("Settings Loaded: %d\n", settings.begin());
@@ -37,12 +36,19 @@ void setup(void) {
   Serial.printf("SerialNumber: %s\n", settings.getSerialNumber());
   Serial.println("compiled: " __DATE__ " " __TIME__);
 
+  ota.begin();
+
   //pinMode(1, INPUT);  //enable analog read for valve
 
   Serial.printf("DAC BEGIN: %d\n", dac.begin({ true, true, false, false }));
-  dac.setValue(0xFFAA);
+  //dac.setValue(0xFFAA);
 
-  Serial.printf("ADC BEGIN: %d\n", adc.begin());
+
+  try {
+    Serial.printf("ADC BEGIN: %d\n", adc.begin());
+  } catch (...) {
+    Serial.println("ADC Failed");
+  }
 
 
 #ifdef MCM_DPOT
@@ -90,9 +96,9 @@ void loop(void) {
   ota.loop();
   heartbeat();
   mcmUSB.loop();
-  //mcmRS485.loop();
+  mcmRS485.loop();
 
-/*
+  /*
   int32_t adcdata = adc.analogRead(MCP_CH0);
   // Convert the analog reading
   double voltage = adcdata * adc.getReference() / adc.getMaxValue();
