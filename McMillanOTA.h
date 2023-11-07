@@ -12,17 +12,6 @@
 
 WebServer server(80);
 
-class McMillanOTA {
-public:
-  McMillanOTA();
-  void begin();
-  void loop();
-protected:
-  const char* host = "McM-ESP32-DEV";
-  const char* ssid = "McMillan Domain";
-  const char* password = "McM!ll@n";
-};
-
 const char* loginIndex =
     "<form name='loginForm'>"
     "<table width='20%' bgcolor='A09F9F' align='center'>"
@@ -101,6 +90,17 @@ const char* loginIndex =
     "});"
     "});"
     "</script>";
+
+class McMillanOTA {
+public:
+  McMillanOTA();
+  void begin();
+  void loop();
+protected:
+  const char* host = "McM-ESP32-DEV";
+  const char* ssid = "McMillan Domain";
+  const char* password = "McM!ll@n";
+};
 #else
 class McMillanOTA {
 public:

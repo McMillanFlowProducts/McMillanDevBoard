@@ -270,7 +270,8 @@ bool McMillanSerial::strcasecmp(char* string1, const char* string2) {
   return strcmp(string1, string2) == 0;
 }
 
-void McMillanSerial::print(const char* _print) {
+template<typename T>
+void McMillanSerial::print(T _print) {
   if (USBMode) {
     USB->print(_print);
   } else {
@@ -278,7 +279,8 @@ void McMillanSerial::print(const char* _print) {
   }
 }
 
-void McMillanSerial::printf(const char* format, const char* _print) {
+template<typename T>
+void McMillanSerial::printf(const char* format, T _print) {
   if (USBMode) {
     USB->printf(format, _print);
   } else {
@@ -286,23 +288,8 @@ void McMillanSerial::printf(const char* format, const char* _print) {
   }
 }
 
-void McMillanSerial::printf(const char* format, int _print) {
-  if (USBMode) {
-    USB->printf(format, _print);
-  } else {
-    Serial->printf(format, _print);
-  }
-}
-
-void McMillanSerial::println(const char* _print) {
-  if (USBMode) {
-    USB->println(_print);
-  } else {
-    Serial->println(_print);
-  }
-}
-
-void McMillanSerial::println(int _print) {
+template<typename T>
+void McMillanSerial::println(T _print) {
   if (USBMode) {
     USB->println(_print);
   } else {

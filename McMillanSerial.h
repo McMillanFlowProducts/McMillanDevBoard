@@ -17,11 +17,12 @@ public:
   void begin(int baud);
   void begin(int baud, int rx, int tx);
   void loop();
-  void print(const char *_print);
-  void printf(const char* format, const char*_print);
-  void printf(const char* format, int _print);
-  void println(const char *_print);
-  void println(int _print);
+  template<typename T>
+  void print(T _print);
+  template<typename T>
+  void printf(const char *format, T _print);
+  template<typename T>
+  void println(T _print);
   HWCDC *USB;
   HardwareSerial *Serial;
 protected:
