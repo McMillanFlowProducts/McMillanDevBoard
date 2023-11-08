@@ -73,7 +73,7 @@ void McMillanOTA::loop() {
 
 #else //MCM_OTA
 void McMillanOTA::begin() {
-  Serial.println("Wrong BEGIN");
+  //Serial.println("Wrong BEGIN");
 }
 void McMillanOTA::loop() {}
 #endif  //MCM_OTA

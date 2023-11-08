@@ -1,7 +1,7 @@
 #ifndef MCMILLAN_OTA_H
 #define MCMILLAN_OTA_H
 
-#define MCM_OTA
+//#define MCM_OTA
 
 #ifdef MCM_OTA
 #include <WiFi.h>
