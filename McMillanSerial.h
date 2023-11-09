@@ -25,6 +25,7 @@ public:
   void println(T _print);
   HWCDC *USB;
   HardwareSerial *Serial;
+  ~McMillanSerial();
 protected:
   McMillanSettings *settings;
   DACx0501 *dac;

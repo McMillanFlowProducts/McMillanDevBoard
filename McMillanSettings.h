@@ -34,6 +34,7 @@ public:
   void setSetpointCalibration(double value);
   void setDACCalibration(double value);
   void setDigitalSetpoint(double value);
+  ~McMillanSettings();
 protected:
   bool active;
   Preferences *prefs;

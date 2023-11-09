@@ -1,13 +1,11 @@
 #include "McMillanSerial.h"
 
 McMillanSerial::McMillanSerial(HWCDC* _USB, McMillanSettings* _settings, DACx0501* _dac, MCP3x6x* _adc, AD5141* _dpot, bool _multiple)
-  : USB(_USB), settings(_settings), dac(_dac), adc(_adc), dpot(_dpot), multiple(_multiple) {
-  USBMode = true;
+  : USB(_USB), settings(_settings), dac(_dac), adc(_adc), dpot(_dpot), multiple(_multiple), USBMode(true), Serial(nullptr) {
 }
 
 McMillanSerial::McMillanSerial(HardwareSerial* _Serial, McMillanSettings* _settings, DACx0501* _dac, MCP3x6x* _adc, AD5141* _dpot, bool _multiple)
-  : Serial(_Serial), settings(_settings), dac(_dac), adc(_adc), dpot(_dpot), multiple(_multiple) {
-  USBMode = false;
+  : Serial(_Serial), settings(_settings), dac(_dac), adc(_adc), dpot(_dpot), multiple(_multiple), USBMode(false), USB(nullptr) {
 }
 
 void McMillanSerial::begin() {
@@ -296,3 +294,5 @@ void McMillanSerial::println(T _print) {
     Serial->println(_print);
   }
 }
+
+McMillanSerial::~McMillanSerial() {}

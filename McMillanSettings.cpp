@@ -113,3 +113,7 @@ void McMillanSettings::setDACCalibration(double value) {
 void McMillanSettings::setDigitalSetpoint(double value) {
   settings.digitalSetpoint = value;
 }
+
+McMillanSettings::~McMillanSettings() {
+  delete prefs;
+}

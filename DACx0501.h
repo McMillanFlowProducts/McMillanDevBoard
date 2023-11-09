@@ -22,6 +22,7 @@ class DACx0501 {
     bool getDAC_PWDWN();
     bool getAlarm();
     bool isConnected();
+    ~DACx0501();
   protected:
     int bits, address, sda, scl, wireCLK;
     uint16_t read(uint8_t cmd);

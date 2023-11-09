@@ -127,3 +127,5 @@ void DACx0501::write(uint8_t cmd, uint16_t data) {
 bool DACx0501::isConnected() {
   return bits != -1;
 }
+
+DACx0501::~DACx0501(){}
