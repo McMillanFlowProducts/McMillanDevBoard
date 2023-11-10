@@ -9,6 +9,7 @@ class DACx0501 {
   public:
     DACx0501(uint8_t address, int _sda, int _scl, int _wireCLK = 10000000);
     bool begin(DACx0501Config _config);
+    bool begin();
     void config(DACx0501Config _config);
     void setValue(uint16_t _value);
     void setREFDIV(bool _value);

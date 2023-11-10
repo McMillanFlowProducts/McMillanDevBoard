@@ -1,14 +1,14 @@
 #define MCM_DEBUG
 //#define MCM_DPOT
 
-#include <Adafruit_NeoPixel.h>
-#include "McMillanPins.h"
+#include "McMillanConfig.h"
 #include "McMillanOTA.h"
 #include "McMillanSettings.h"
 #include "McMillanSerial.h"
 #include "DACx0501.h"
 #include "MCP3x6x.h"
 #include "AD5144A.h"
+#include <Adafruit_NeoPixel.h>
 
 Adafruit_NeoPixel pixels(1, MCM_NEOPIXEL, NEO_GRB + NEO_KHZ800);
 SPIClass spi = SPIClass(HSPI);
@@ -40,7 +40,7 @@ void setup(void) {
 
   //pinMode(1, INPUT);  //enable analog read for valve
 
-  Serial.printf("DAC BEGIN: %d\n", dac.begin({ true, true, false, false }));
+  Serial.printf("DAC BEGIN: %d\n", dac.begin());
   //dac.setValue(0xFFAA);
 
 

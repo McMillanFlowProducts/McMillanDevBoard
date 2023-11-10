@@ -1,5 +1,5 @@
-#ifndef MCMILLANPINS_H
-#define MCMILLANPINS_H
+#ifndef MCMILLANCONFIG_H
+#define MCMILLANCONFIG_H
 
 #define MCM_SDA 41
 #define MCM_SCL 40
@@ -9,4 +9,4 @@
 #define MCM_NEOPIXEL 48
 #define ADC_CS 42
 
-#endif
+#endif //MCMILLANCONFIG_H

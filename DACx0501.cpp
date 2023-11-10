@@ -9,6 +9,12 @@ bool DACx0501::begin(DACx0501Config _config) {
   return getRES();
 }
 
+bool DACx0501::begin() {
+  Wire.begin(sda, scl, wireCLK);
+  config({ true, true, false, false });
+  return getRES();
+}
+
 void DACx0501::config(DACx0501Config _config) {
   setREFDIV(_config.REFDIV);
   setGain(_config.GAIN);
