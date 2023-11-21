@@ -1,5 +1,5 @@
 #define MCM_DEBUG
-//#define MCM_DPOT
+#define MCM_DPOT
 
 #include "McMillanConfig.h"
 #include "McMillanOTA.h"
@@ -13,8 +13,8 @@
 Adafruit_NeoPixel pixels(1, MCM_NEOPIXEL, NEO_GRB + NEO_KHZ800);
 SPIClass spi = SPIClass(HSPI);
 DACx0501 dac(DAC_ADDR_AGND, MCM_SDA, MCM_SCL);
-MCP3464 adc(ADC_CS, &spi, MCM_MOSI, MCM_MISO, MCM_SCK);
-AD5141 dpot(0x77);
+MCP3462 adc(ADC_CS, &spi, MCM_MOSI, MCM_MISO, MCM_SCK);
+AD5141 dpot(0x20);
 McMillanSettings settings;
 McMillanSerial mcmUSB(&Serial, &settings, &dac, &adc, &dpot);
 McMillanSerial mcmRS485(&Serial0, &settings, &dac, &adc, &dpot, true);
@@ -98,8 +98,7 @@ void loop(void) {
   mcmUSB.loop();
   mcmRS485.loop();
 
-  /*
-  int32_t adcdata = adc.analogRead(MCP_CH0);
+  /*int32_t adcdata = adc.analogRead(MCP_CH0);
   // Convert the analog reading
   double voltage = adcdata * adc.getReference() / adc.getMaxValue();
   // print out the value you read:
@@ -107,5 +106,5 @@ void loop(void) {
   Serial.println(voltage, 10);
 
   delay(100);
-*/
+  */
 }
