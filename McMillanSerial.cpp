@@ -192,6 +192,16 @@ void McMillanSerial::cmd_set(char* args[]) {
           }
         } else if (strcasecmp(args[0], "adc") && factory) {
           println("Not yet implemented");
+        } else if (strcasecmp(args[0], "dpot") && factory) {
+          int state = checkValue(args[2]);
+          if (strcasecmp(args[1], "value")) {
+            //dpot->write(const uint8_t rdac, const uint8_t value)atoi(args[2]));
+            printf("Set DPOT Value: %d\n", atoi(args[2]));
+          } else if (state != -1) {
+            printf("Unknown Command: %s\n", prevBuffer);
+          } else {
+            printf("Unknown Value: %s\n", args[2]);
+          }
         } else {
           printf("Unknown Command: %s\n", prevBuffer);
         }
@@ -215,8 +225,12 @@ void McMillanSerial::cmd_get(char* args[]) {
             printf("SerialNumber: %s\n", settings->getSerialNumber());
           } else if (strcasecmp(args[0], "model")) {
             printf("Model: %s\n", settings->getModel());
-          } else if (strcasecmp(args[0], "dac")) {
+          } else if (strcasecmp(args[0], "dac") && factory) {
             printf("DAC Value: %d\n", dac->getValue());
+          } else if (strcasecmp(args[0], "dpot") && factory) {
+            uint8_t rdac;
+            dpot->readBackRDAC(rdac);
+            printf("DPOT Value: %d\n", rdac);
           } else {
             printf("Unknown Command: %s\n", prevBuffer);
           }
@@ -224,7 +238,7 @@ void McMillanSerial::cmd_get(char* args[]) {
         break;
       case 2:
         {
-          if (strcasecmp(args[0], "dac")) {
+          if (strcasecmp(args[0], "dac") && factory) {
             if (strcasecmp(args[1], "refdiv")) {
               printf("DAC REFDIV: %d\n", dac->getREFDIV());
             } else if (strcasecmp(args[1], "gain")) {
@@ -240,7 +254,9 @@ void McMillanSerial::cmd_get(char* args[]) {
             }
           } else if (strcasecmp(args[0], "adc") && factory) {
             println("Not yet implemented");
-          } else {
+          } else if (strcasecmp(args[0], "dpot") && factory) {
+            println("Not yet implemented");
+          }else {
             printf("Unknown Command: %s\n", prevBuffer);
           }
         }
