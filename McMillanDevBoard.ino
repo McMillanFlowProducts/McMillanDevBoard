@@ -1,5 +1,5 @@
 #define MCM_DEBUG
-#define MCM_DPOT
+//#define MCM_DPOT
 
 #include "McMillanConfig.h"
 #include "McMillanOTA.h"
@@ -40,8 +40,27 @@ void setup(void) {
 
   //pinMode(1, INPUT);  //enable analog read for valve
 
+ /*  Wire.begin(MCM_SDA, MCM_SCL, 10000000);
+  byte error, address;
+  int nDevices = 0;
+
+  Serial.println("Scanning for I2C devices ...");
+  for (address = 0x01; address < 0x7f; address++) {
+    Wire.beginTransmission(address);
+    error = Wire.endTransmission();
+    if (error == 0) {
+      Serial.printf("I2C device found at address 0x%02X\n", address);
+      nDevices++;
+    } else if (error != 2) {
+      Serial.printf("Error %d at address 0x%02X\n", error, address);
+    }
+  }
+  if (nDevices == 0) {
+    Serial.println("No I2C devices found");
+  } */
+
   Serial.printf("DAC BEGIN: %d\n", dac.begin());
-  //dac.setValue(0xFFAA);
+  dac.setValue(0xFFAA);
 
 
   try {
