@@ -11,7 +11,7 @@ bool DACx0501::begin(DACx0501Config _config) {
 
 bool DACx0501::begin() {
   Wire.begin(sda, scl, wireCLK);
-  config({ true, true, false, false });
+  config({ false, true, false, false });
   return getRES();
 }
 

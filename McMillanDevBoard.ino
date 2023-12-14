@@ -2,7 +2,7 @@
 //#define MCM_DPOT
 
 #include "McMillanConfig.h"
-#include "McMillanOTA.h"
+//#include "McMillanOTA.h"
 #include "McMillanSettings.h"
 #include "McMillanSerial.h"
 #include "DACx0501.h"
@@ -18,7 +18,7 @@ AD5141 dpot(0x20);
 McMillanSettings settings;
 McMillanSerial mcmUSB(&Serial, &settings, &dac, &adc, &dpot);
 McMillanSerial mcmRS485(&Serial0, &settings, &dac, &adc, &dpot, true);
-McMillanOTA ota;
+//McMillanOTA ota;
 //McMillanSerial *coms[2] = {&mcmUSB, &mcmRS485};
 
 long prevMillis = 0;
@@ -28,7 +28,7 @@ void setup(void) {
   pixels.begin();
   pixels.setBrightness(20);
   mcmUSB.begin();
-  mcmRS485.begin();
+  //mcmRS485.begin();
 
 #ifdef MCM_DEBUG
   Serial.printf("Settings Loaded: %d\n", settings.begin());
@@ -36,7 +36,7 @@ void setup(void) {
   Serial.printf("SerialNumber: %s\n", settings.getSerialNumber());
   Serial.println("compiled: " __DATE__ " " __TIME__);
 
-  ota.begin();
+  //ota.begin();
 
   //pinMode(1, INPUT);  //enable analog read for valve
 
@@ -60,7 +60,7 @@ void setup(void) {
   } */
 
   Serial.printf("DAC BEGIN: %d\n", dac.begin());
-  dac.setValue(0xFFAA);
+  dac.setValue(14896); //5.000v == 14896  4.096v == 12203  2.5v == 7449
 
 
   try {
@@ -89,7 +89,7 @@ void setup(void) {
   settings.begin();
   dac.begin();
   adc.begin();
-  ota.begin();
+  //ota.begin();
 #ifdef MCM_DPOT
   dpot.begin();
 #endif  //MCM_DPOT
@@ -112,10 +112,10 @@ void heartbeat() {
 }
 
 void loop(void) {
-  ota.loop();
+  //ota.loop();
   heartbeat();
   mcmUSB.loop();
-  mcmRS485.loop();
+  //mcmRS485.loop();
 
   /*int32_t adcdata = adc.analogRead(MCP_CH0);
   // Convert the analog reading
