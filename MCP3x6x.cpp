@@ -93,7 +93,7 @@ bool MCP3x6x::begin(uint16_t channelmask, float vref) {
   pinMode(_pinCS, OUTPUT);
   digitalWrite(_pinCS, HIGH);
 
-  _spi->begin();
+  _spi->begin(_pinCLK,_pinMISO,_pinMOSI,_pinCS);
 #if ARDUINO_ARCH_SAMD
   // todo figure out how to get dynamicaly sercom index
   pinPeripheral(_pinMISO, PIO_SERCOM);
@@ -306,6 +306,7 @@ int32_t MCP3x6x::analogRead(mux_t ch) {
     while (!_status.dr) {
       _status = read(&adcdata);
     }
+    _status = read(&adcdata);
     return result.raw[(uint8_t)adcdata.channelid] = adcdata.value;
   }
 

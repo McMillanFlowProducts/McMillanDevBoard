@@ -105,15 +105,15 @@ class MCP3x6x {
                                          *_DEFAULT_GAIN,   *_DEFAULT_RESERVED1, _DEFAULT_RESERVED2,
                                          _DEFAULT_LOCK,    (uint16_t)0x0000,    *_DEFAULT_CRCCFG};
 
-  typedef union {
-    struct {
-      struct __attribute__((__packed__)) {
-        bool por;     //!< status: power on reset
-        bool crccfg;  //!< status: crc
-        bool dr;      //!< status: data ready
-      };
-      uint8_t      : 1;  //!< !addr[0]
-      uint8_t addr : 2;  //!< addresse
+typedef union {
+     struct {
+       struct __attribute__((__packed__)) {
+         bool por   : 1;  //!< status: power on reset
+         bool crccfg : 1;  //!< status: crc
+         bool dr    : 1;  //!< status: data ready
+       };
+       uint8_t      : 1;  //!< !addr[0]
+       uint8_t addr : 2;  //!< addresse
       uint8_t      : 2;  //!< EMTPY
     };
     uint8_t raw;
@@ -131,7 +131,7 @@ class MCP3x6x {
   uint8_t _pinMCLK, _pinIRQ;
 
   bool _differential = false;
-  float _reference   = 3.3;
+  float _reference   = 2.4;
   size_t _resolution, _resolution_max;
   size_t _channels_max;
   uint16_t _channel_mask;

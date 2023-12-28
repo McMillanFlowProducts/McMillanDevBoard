@@ -40,25 +40,6 @@ void setup(void) {
 
   //pinMode(1, INPUT);  //enable analog read for valve
 
- /*  Wire.begin(MCM_SDA, MCM_SCL, 10000000);
-  byte error, address;
-  int nDevices = 0;
-
-  Serial.println("Scanning for I2C devices ...");
-  for (address = 0x01; address < 0x7f; address++) {
-    Wire.beginTransmission(address);
-    error = Wire.endTransmission();
-    if (error == 0) {
-      Serial.printf("I2C device found at address 0x%02X\n", address);
-      nDevices++;
-    } else if (error != 2) {
-      Serial.printf("Error %d at address 0x%02X\n", error, address);
-    }
-  }
-  if (nDevices == 0) {
-    Serial.println("No I2C devices found");
-  } */
-
   Serial.printf("DAC BEGIN: %d\n", dac.begin());
   dac.setValue(14896); //5.000v == 14896  4.096v == 12203  2.5v == 7449
 
@@ -117,13 +98,11 @@ void loop(void) {
   mcmUSB.loop();
   //mcmRS485.loop();
 
-  /*int32_t adcdata = adc.analogRead(MCP_CH0);
+  int32_t adcdata = adc.analogRead(MCP_AVDD);
   // Convert the analog reading
   double voltage = adcdata * adc.getReference() / adc.getMaxValue();
   // print out the value you read:
-  Serial.print("voltage: ");
-  Serial.println(voltage, 10);
+  Serial.printf("voltage: %f\n", voltage);
 
-  delay(100);
-  */
+  delay(1000);
 }
