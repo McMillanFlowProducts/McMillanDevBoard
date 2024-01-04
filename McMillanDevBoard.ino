@@ -6,14 +6,14 @@
 #include "McMillanSettings.h"
 #include "McMillanSerial.h"
 #include "DACx0501.h"
-#include "MCP3x6x.h"
+#include "MCP3x6x.hpp"
 #include "AD5144A.h"
 #include <Adafruit_NeoPixel.h>
 
 Adafruit_NeoPixel pixels(1, MCM_NEOPIXEL, NEO_GRB + NEO_KHZ800);
-SPIClass spi = SPIClass(HSPI);
+SPIClass mcmspi = SPIClass(HSPI);
 DACx0501 dac(DAC_ADDR_AGND, MCM_SDA, MCM_SCL);
-MCP3462 adc(ADC_CS, &spi, MCM_MOSI, MCM_MISO, MCM_SCK);
+MCP3462 adc(ADC_CS, &mcmspi, MCM_MOSI, MCM_MISO, MCM_SCK);
 AD5141 dpot(0x20);
 McMillanSettings settings;
 McMillanSerial mcmUSB(&Serial, &settings, &dac, &adc, &dpot);
@@ -23,6 +23,7 @@ McMillanSerial mcmRS485(&Serial0, &settings, &dac, &adc, &dpot, true);
 
 long prevMillis = 0;
 bool heartbeatLED = false;
+long counter = 0;
 
 void setup(void) {
   pixels.begin();
@@ -45,7 +46,7 @@ void setup(void) {
 
 
   try {
-    Serial.println((adc.begin()) ? "ADC Started" : "ADC Failed");
+    Serial.println((adc.begin(0, 2.4)) ? "ADC Started" : "ADC Failed");
   } catch (...) {
     Serial.println("ADC Failed");
   }
@@ -98,11 +99,11 @@ void loop(void) {
   mcmUSB.loop();
   //mcmRS485.loop();
 
-  int32_t adcdata = adc.analogRead(MCP_AVDD);
+  int32_t adcdata = adc.analogRead(MCP_TEMP);
   // Convert the analog reading
   double voltage = adcdata * adc.getReference() / adc.getMaxValue();
   // print out the value you read:
-  Serial.printf("voltage: %f\n", voltage);
+  Serial.printf("%06d > %1.3fv >> %09d\n", adcdata, voltage, ++counter);
 
   delay(1000);
 }
