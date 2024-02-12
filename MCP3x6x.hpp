@@ -46,7 +46,7 @@
 #  define MCP3x6x_DEVICE_ADDRESS (0x01)  //!< DEVICE ADDRESS
 #endif
 #ifndef MCP3x6x_SPI_SPEED
-#  define MCP3x6x_SPI_SPEED (10000000)  //!< SPI SPEED Value
+#  define MCP3x6x_SPI_SPEED (200000)  //!< SPI SPEED Value
 #endif
 #if MCP3x6x_SPI_SPEED > 20000000
 #  error "MCP3x6x_SPI_SPEED above limit (20MHz)!"

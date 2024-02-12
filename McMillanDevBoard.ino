@@ -46,7 +46,7 @@ void setup(void) {
 
 
   try {
-    Serial.println((adc.begin(0, 2.4)) ? "ADC Started" : "ADC Failed");
+    Serial.println((adc.begin(0)) ? "ADC Started" : "ADC Failed");
   } catch (...) {
     Serial.println("ADC Failed");
   }
