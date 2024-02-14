@@ -3,7 +3,6 @@
 //#define MCM_DPOT
 
 #include "McMillanConfig.h"
-//#include "McMillanOTA.h"
 #include "McMillanSettings.h"
 #include "McMillanSerial.h"
 #include "DACx0501.h"
@@ -12,8 +11,8 @@
 
 #ifdef MCM_ADC
 #include "MCP3x6x.hpp"
-SPIClass mcmspi = SPIClass(HSPI);
-MCP3462 adc(ADC_CS, &mcmspi, MCM_MOSI, MCM_MISO, MCM_SCK);
+SPIClass spi = SPIClass(HSPI);
+MCP3462 adc(ADC_CS, &spi, MCM_MOSI, MCM_MISO, MCM_SCK);
 #endif //MCM_ADC
 
 Adafruit_NeoPixel pixels(1, MCM_NEOPIXEL, NEO_GRB + NEO_KHZ800);
