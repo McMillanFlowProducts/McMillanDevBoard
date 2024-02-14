@@ -1,11 +1,11 @@
 #include "McMillanSerial.h"
 
-McMillanSerial::McMillanSerial(HWCDC* _USB, McMillanSettings* _settings, DACx0501* _dac, MCP3x6x* _adc, AD5141* _dpot, bool _addressMode)
-  : USB(_USB), settings(_settings), dac(_dac), adc(_adc), dpot(_dpot), addressMode(_addressMode), USBMode(true), Serial(nullptr) {
+McMillanSerial::McMillanSerial(HWCDC* _USB, McMillanSettings* _settings, DACx0501* _dac, AD5141* _dpot, bool _addressMode)
+  : USB(_USB), settings(_settings), dac(_dac), dpot(_dpot), addressMode(_addressMode), USBMode(true), Serial(nullptr) {
 }
 
-McMillanSerial::McMillanSerial(HardwareSerial* _Serial, McMillanSettings* _settings, DACx0501* _dac, MCP3x6x* _adc, AD5141* _dpot, bool _addressMode)
-  : Serial(_Serial), settings(_settings), dac(_dac), adc(_adc), dpot(_dpot), addressMode(_addressMode), USBMode(false), USB(nullptr) {
+McMillanSerial::McMillanSerial(HardwareSerial* _Serial, McMillanSettings* _settings, DACx0501* _dac, AD5141* _dpot, bool _addressMode)
+  : Serial(_Serial), settings(_settings), dac(_dac), dpot(_dpot), addressMode(_addressMode), USBMode(false), USB(nullptr) {
 }
 
 void McMillanSerial::begin() {

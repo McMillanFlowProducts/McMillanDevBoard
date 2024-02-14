@@ -16,8 +16,8 @@ DACx0501 dac(DAC_ADDR_AGND, MCM_SDA, MCM_SCL);
 MCP3462 adc(ADC_CS, &mcmspi, MCM_MOSI, MCM_MISO, MCM_SCK);
 AD5141 dpot(0x20);
 McMillanSettings settings;
-McMillanSerial mcmUSB(&Serial, &settings, &dac, &adc, &dpot);
-McMillanSerial mcmRS485(&Serial0, &settings, &dac, &adc, &dpot, true);
+McMillanSerial mcmUSB(&Serial, &settings, &dac, &dpot);
+McMillanSerial mcmRS485(&Serial0, &settings, &dac, &dpot, true);
 //McMillanOTA ota;
 //McMillanSerial *coms[2] = {&mcmUSB, &mcmRS485};
 
