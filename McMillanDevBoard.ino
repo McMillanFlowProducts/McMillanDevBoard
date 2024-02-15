@@ -81,15 +81,15 @@ void setup(void) {
   settings.begin();
   dac.begin();
   adc.begin();
-  //ota.begin();
 #ifdef MCM_DPOT
   dpot.begin();
 #endif  //MCM_DPOT
 #endif  //MCM_DEBUG
 
   mcmController.begin(&sensor, &output, &setpoint, controllerP, controllerI, controllerD);
+  //mcmController.reverse();
   //mcmController.setSampleTime(10);
-  //mcmController.setOutputLimits(0, 255);
+  mcmController.setOutputLimits(0, 1023);
   //mcmController.setBias(255.0 / 2.0);
   //mcmController.setWindUpLimits(-10, 10);
   mcmController.start();
@@ -115,13 +115,13 @@ void loop(void) {
   mcmUSB.loop();
   //mcmRS485.loop();
 
-  sensor = analogRead(MCM_SENSOR);
-  setpoint = analogRead(MCM_SETPOINT);
+  sensor = analogRead(MCM_SENSOR * 3.3 / 4096.0);
+  setpoint = analogRead(MCM_SETPOINT * 3.3 / 4096.0);
+  dac.setValue(sensor / 3.3 * (14 ^ 2));
   mcmController.compute();
-  dac.setValue(output);
-
+  
 #ifdef MCM_DEBUG
-  mcmController.debug(&Serial, "mcmController", PRINT_INPUT | PRINT_OUTPUT | PRINT_SETPOINT | PRINT_BIAS | PRINT_P | PRINT_I | PRINT_D);
+  mcmController.debug(&Serial, "mcmPID", PRINT_INPUT | PRINT_OUTPUT | PRINT_SETPOINT | PRINT_BIAS | PRINT_P | PRINT_I | PRINT_D);
   delay(1000);
 #endif  //MCM_DEBUG
 
