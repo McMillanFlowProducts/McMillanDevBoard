@@ -1,5 +1,5 @@
 #define MCM_DEBUG
-#define MCM_ADC
+//#define MCM_ADC
 //#define MCM_DPOT
 
 #include "McMillanConfig.h"
@@ -8,17 +8,19 @@
 #include "DACx0501.h"
 #include "AD5144A.h"
 #include <Adafruit_NeoPixel.h>
+#include "ArduPID.h"
 
 #ifdef MCM_ADC
 #include "MCP3x6x.hpp"
 SPIClass spi = SPIClass(HSPI);
 MCP3462 adc(ADC_CS, &spi, MCM_MOSI, MCM_MISO, MCM_SCK);
-#endif //MCM_ADC
+#endif  //MCM_ADC
 
 Adafruit_NeoPixel pixels(1, MCM_NEOPIXEL, NEO_GRB + NEO_KHZ800);
 DACx0501 dac(DAC_ADDR_AGND, MCM_SDA, MCM_SCL);
 AD5141 dpot(0x20);
 McMillanSettings settings;
+ArduPID mcmController;
 McMillanSerial mcmUSB(&Serial, &settings, &dac, &dpot);
 McMillanSerial mcmRS485(&Serial0, &settings, &dac, &dpot, true);
 
@@ -26,9 +28,20 @@ long prevMillis = 0;
 bool heartbeatLED = false;
 long counter = 0;
 
+double sensor;
+double output;
+double setpoint = 2.5;
+double controllerP = 10;
+double controllerI = 1;
+double controllerD = 0.5;
+
 void setup(void) {
+  pinMode(MCM_SENSOR, INPUT);    //enable analog read for sensor
+  pinMode(MCM_SETPOINT, INPUT);  //enable analog read for setpoint
+
   pixels.begin();
   pixels.setBrightness(20);
+
   mcmUSB.begin();
   //mcmRS485.begin();
 
@@ -38,12 +51,8 @@ void setup(void) {
   Serial.printf("SerialNumber: %s\n", settings.getSerialNumber());
   Serial.println("compiled: " __DATE__ " " __TIME__);
 
-  //ota.begin();
-
-  //pinMode(1, INPUT);  //enable analog read for valve
-
   Serial.printf("DAC BEGIN: %d\n", dac.begin());
-  dac.setValue(14896);  //5.000v == 14896  4.096v == 12203  2.5v == 7449
+  //dac.setValue(14896);  //5.000v == 14896  4.096v == 12203  2.5v == 7449
 
 #ifdef MCM_ADC
   try {
@@ -77,6 +86,13 @@ void setup(void) {
   dpot.begin();
 #endif  //MCM_DPOT
 #endif  //MCM_DEBUG
+
+  mcmController.begin(&sensor, &output, &setpoint, controllerP, controllerI, controllerD);
+  //mcmController.setSampleTime(10);
+  //mcmController.setOutputLimits(0, 255);
+  //mcmController.setBias(255.0 / 2.0);
+  //mcmController.setWindUpLimits(-10, 10);
+  mcmController.start();
 }
 
 void heartbeat() {
@@ -95,10 +111,19 @@ void heartbeat() {
 }
 
 void loop(void) {
-  //ota.loop();
   heartbeat();
   mcmUSB.loop();
   //mcmRS485.loop();
+
+  sensor = analogRead(MCM_SENSOR);
+  setpoint = analogRead(MCM_SETPOINT);
+  mcmController.compute();
+  dac.setValue(output);
+
+#ifdef MCM_DEBUG
+  mcmController.debug(&Serial, "mcmController", PRINT_INPUT | PRINT_OUTPUT | PRINT_SETPOINT | PRINT_BIAS | PRINT_P | PRINT_I | PRINT_D);
+  delay(1000);
+#endif  //MCM_DEBUG
 
 #ifdef MCM_ADC
   int32_t adcdata = adc.analogRead(MCP_TEMP);
