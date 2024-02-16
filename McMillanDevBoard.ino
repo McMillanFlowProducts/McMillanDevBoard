@@ -115,9 +115,9 @@ void loop(void) {
   mcmUSB.loop();
   //mcmRS485.loop();
 
-  sensor = analogRead(MCM_SENSOR * 3.3 / 4096.0);
-  setpoint = analogRead(MCM_SETPOINT * 3.3 / 4096.0);
-  dac.setValue(sensor / 3.3 * (14 ^ 2));
+  sensor = analogRead(MCM_SENSOR) * (3.3 / 4096.0);
+  setpoint = analogRead(MCM_SETPOINT) * (3.3 / 4096.0);
+  dac.setValue((int) (sensor * (16384 / 3.3)));
   mcmController.compute();
   
 #ifdef MCM_DEBUG
