@@ -1,5 +1,5 @@
 #define MCM_DEBUG
-//#define MCM_ADC
+#define MCM_ADC
 //#define MCM_DPOT
 
 #include "McMillanConfig.h"
@@ -121,8 +121,8 @@ void loop(void) {
   mcmController.compute();
   
 #ifdef MCM_DEBUG
-  mcmController.debug(&Serial, "mcmPID", PRINT_INPUT | PRINT_OUTPUT | PRINT_SETPOINT | PRINT_BIAS | PRINT_P | PRINT_I | PRINT_D);
-  delay(1000);
+  //mcmController.debug(&Serial, "mcmPID", PRINT_INPUT | PRINT_OUTPUT | PRINT_SETPOINT | PRINT_BIAS | PRINT_P | PRINT_I | PRINT_D);
+  //delay(1000);
 #endif  //MCM_DEBUG
 
 #ifdef MCM_ADC

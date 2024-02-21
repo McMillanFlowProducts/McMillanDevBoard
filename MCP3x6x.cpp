@@ -55,10 +55,15 @@ MCP3x6x::status_t MCP3x6x::_transfer(uint8_t *data, uint8_t addr, size_t size) {
   noInterrupts();
   digitalWrite(_pinCS, LOW);
   _status.raw = _spi->transfer(addr);
+#ifdef ARDUINO_ARCH_ESP32
+  _spi->writeBytes(data, size);
+#else
   _spi->transfer(data, size);
+#endif
   digitalWrite(_pinCS, HIGH);
   interrupts();
   _spi->endTransaction();
+
   return _status;
 }
 
