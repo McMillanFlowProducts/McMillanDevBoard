@@ -283,7 +283,7 @@ int32_t MCP3x6x::analogRead(mux_t ch) {
     settings.mux = ch;
     _status = write(settings.mux);
     conversion();
-    Serial.println(_status.dr);
+    //Serial.println(_status.dr);
     //while (!_status.dr) {
     //  _status = read(&adcdata);
     // Serial.println(_status.dr);

@@ -126,7 +126,7 @@ void loop(void) {
 #endif  //MCM_DEBUG
 
 #ifdef MCM_ADC
-  int32_t adcdata = adc.analogRead(MCP_TEMP);
+  int32_t adcdata = adc.analogRead(MCP_CH1);
   // Convert the analog reading
   double voltage = adcdata * adc.getReference() / adc.getMaxValue();
   // print out the value you read:
